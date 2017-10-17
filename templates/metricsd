@@ -1,0 +1,106 @@
+#!/bin/bash
+
+METRICS_DIR=<%= @metrics_dir %>
+
+source $METRICS_DIR/bin/activate
+
+#supervisord config file
+CONF_FILE=$METRICS_DIR/etc/supervisord.conf
+
+#supervisord pid file
+PID_FILE=$METRICS_DIR/run/supervisord.pid
+
+# rc script for startup/shutdown/cleaning of all Puccini
+# web services. We use supervisord to handle startup and 
+# shutdown.
+#
+#  1) Orchestrator
+
+ARGV="$@"
+ERROR=0
+
+start() {
+    # start elasticsearch
+    sudo service elasticsearch start
+
+    if [ -f ${PID_FILE} ]; then
+        PID=`cat ${PID_FILE}`
+        PID_DIR=/proc/${PID}
+        if [ -d ${PID_DIR} ]; then
+            echo "metricsd is already running."
+            exit 1
+        fi
+    fi
+    $METRICS_DIR/bin/supervisord -c ${CONF_FILE}
+}
+
+stop() {
+    if [ -f ${PID_FILE} ]; then
+        PID=`cat ${PID_FILE}`
+        kill -TERM $PID
+        PID_DIR=/proc/${PID}
+        echo -n "Waiting for $PID to terminate."
+        while [ -d ${PID_DIR} ]; do
+            sleep 1
+            echo -n "."
+        done
+        echo "done."
+    fi
+
+    # stop elasticsearch
+    sudo service elasticsearch stop
+}
+
+restart() {
+    stop
+    start
+}
+
+clean() {
+}
+
+clean_es() {
+  echo -n "Waiting for ElasticSearch to start."
+  (echo >/dev/tcp/localhost/9200) &>/dev/null
+  while [ $? -ne 0 ]; do
+    sleep 1
+    echo -n "."
+    (echo >/dev/tcp/localhost/9200) &>/dev/null
+  done
+  echo "done."
+  curl -XDELETE "http://localhost:9200/job_status"
+}
+
+cleanstart() {
+    clean
+    start
+    clean_es
+}
+
+cleanrestart() {
+    stop
+    cleanstart
+}
+
+case $ARGV in
+start)
+    start
+    ;;
+stop)
+    stop
+    ;;
+restart)
+    restart
+    ;;
+cleanstart)
+    cleanstart
+    ;;
+cleanrestart)
+    cleanrestart
+    ;;
+*)
+    echo "Unknown argument $ARGV.  metricsd (start|stop|restart|cleanstart|cleanrestart)"
+    ERROR=1
+esac
+
+exit $ERROR

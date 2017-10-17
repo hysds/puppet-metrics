@@ -1,0 +1,15 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+
+# misc
+umask 0022
+export LD_LIBRARY_PATH=/usr/lib:/usr/lib64:/usr/local/lib:$LD_LIBRARY_PATH
+export GIT_SSL_NO_VERIFY=true
+
+# source metrics virtualenv
+export METRICS_DIR=$HOME/metrics
+source $METRICS_DIR/bin/activate

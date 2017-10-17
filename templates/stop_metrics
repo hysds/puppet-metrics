@@ -1,0 +1,4 @@
+#!/bin/bash
+
+METRICS_DIR=<%= @metrics_dir %>
+$METRICS_DIR/bin/metricsd stop

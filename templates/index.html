@@ -1,0 +1,18 @@
+<html>
+<head>
+<title>TOC for <%= @hostname %></title>
+</head>
+<body>
+<h1>TOC for <%= @hostname %></h1>
+<ol>
+<!--
+  <li><a href="ftp://<%= @ec2_public_ipv4 %>">FTP</a></li>
+  <li><a href="http://<%= @ec2_public_ipv4 %>:8080/opendap">OPeNDAP</a></li>
+  <li><a href="http://<%= @ec2_public_ipv4 %>/test/data">webification</a></li>
+  <li><a href="http://<%= @ec2_public_ipv4 %>:8984/solr">SOLR</a></li>
+-->
+  <li><a href="http://<%= @ec2_public_ipv4 %>:8085">WebDAV</a></li>
+  <li><a href="http://<%= @ec2_public_ipv4 %>/metrics/">Metrics</a></li>
+</ol>
+</body>
+</html>

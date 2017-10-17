@@ -1,0 +1,104 @@
+commit 7e395c20697505019fd34109c9139c1d5c10030f
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Tue Sep 19 17:43:16 2017 +0000
+
+    increase thread pool sizes
+
+commit ec44d77a4b0b33836832895fb891613b9309ca3f
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Mon Sep 18 18:25:23 2017 +0000
+
+    update installer script
+
+commit d5f2f0c8e9eebc2290cdc42446ceaea8e035d89b
+Merge: 7eb0a78 570c957
+Author: Gerald Manipon <gmanipon@jpl.nasa.gov>
+Date:   Mon Aug 21 14:44:50 2017 -0700
+
+    Merge pull request #1 from hysds-org/elk-5
+    
+    update metrics to ELK5
+
+commit 570c9573426addf9af55b0133eb71d41275f4ce2
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Fri Jun 30 02:08:29 2017 +0000
+
+    update to use cmd_duration
+
+commit a01b6617906ab6dddf40a29e5a83cbcec7f13ce2
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Thu Jun 29 21:13:19 2017 +0000
+
+    update import of dashboards
+
+commit df9e0c0afb6de89f407eb00e66fdb7fc97dbaf7f
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Mon Jun 26 21:16:25 2017 +0000
+
+    start instance_stats
+
+commit 4619b926fda8e463de108e11389061986400cb64
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Mon Jun 26 21:10:15 2017 +0000
+
+    configure logstash and enable CORS access for elasticsearch-head
+
+commit 847eddd3000559cd60deff56cab949e0a02c6762
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Mon Jun 26 20:30:08 2017 +0000
+
+    initial implementation of metrics via ELK5
+
+commit 7eb0a78fc41d64f52533a1cb6298af46821b5b54
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Jun 21 14:31:33 2017 +0000
+
+    use correct time_end param
+
+commit 4481d14e34514f3e18d8f5ea71a3dec6a4c1b051
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Jun 21 13:41:45 2017 +0000
+
+    set timeline time field to @timestamp
+
+commit 40671eed1d0be99d27bab7713e7dddba6f05acdf
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Jan 27 15:59:29 2016 +0000
+
+    handle duplicate declaration
+
+commit 85f5e590ed125a671f12feca1812b7a7a22a68f6
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Thu Nov 5 23:19:05 2015 +0000
+
+    update elasticsearch and install job & worker metrics
+
+commit b4a1b7a3a0b24b92c9fa87db4a5b6f92a086934f
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Thu Oct 1 18:58:28 2015 +0000
+
+    use cloud_utils
+
+commit b5f94ced5b5a4edcb44a90ecf92675c3135c200b
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Thu Oct 1 16:51:15 2015 +0000
+
+    update doc
+
+commit bf827d62345eaf28ae15e167a7318734581b7210
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Wed Sep 30 22:41:03 2015 +0000
+
+    open up default tsunami port
+
+commit d90b7e66bfbb34fe4a29f0617314653943795a03
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Tue Sep 29 23:24:04 2015 +0000
+
+    update
+
+commit 9bfc631422fcaa1067c16d03942321d04479fb0c
+Author: gmanipon <gmanipon@jpl.nasa.gov>
+Date:   Fri Sep 25 20:09:32 2015 +0000
+
+    initial import
