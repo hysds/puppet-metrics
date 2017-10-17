@@ -345,7 +345,7 @@ class metrics {
 
 
   cat_split_file { "logstash-5.6.3.tar.gz":
-    install_dir => "/etc/puppet/modules/mozart/files",
+    install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
