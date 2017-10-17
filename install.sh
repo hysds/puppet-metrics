@@ -65,7 +65,7 @@ site_pp=$mod_dir/site.pp
 
 # check that module is here; if not, export it
 if [ ! -d $mod_dir ]; then
-  $git_cmd clone $git_loc $mod_dir
+  $git_cmd clone -b docker --single-branch $git_loc $mod_dir
 fi
 
 
@@ -79,7 +79,21 @@ site_pp=$mod_dir/site.pp
 
 # check that module is here; if not, export it
 if [ ! -d $mod_dir ]; then
-  $git_cmd clone $git_loc $mod_dir
+  $git_cmd clone -b docker --single-branch $git_loc $mod_dir
+fi
+
+
+##########################################
+# export mozart puppet module
+##########################################
+
+git_loc="${git_url}/hysds-org/puppet-mozart"
+mod_dir=$mods_dir/mozart
+site_pp=$mod_dir/site.pp
+
+# check that module is here; if not, export it
+if [ ! -d $mod_dir ]; then
+  $git_cmd clone -b docker --single-branch $git_loc $mod_dir
 fi
 
 
@@ -93,7 +107,7 @@ site_pp=$mod_dir/site.pp
 
 # check that module is here; if not, export it
 if [ ! -d $mod_dir ]; then
-  $git_cmd clone $git_loc $mod_dir
+  $git_cmd clone -b docker --single-branch $git_loc $mod_dir
 fi
 
 

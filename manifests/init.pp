@@ -99,6 +99,7 @@ class metrics {
     'httpd-devel': ensure => present;
     'mod_ssl': ensure => present;
     'npm': ensure => present;
+    'tuned': ensure => present;
   }
 
 
@@ -229,6 +230,7 @@ class metrics {
   file { "/etc/tuned/no-thp":
     ensure  => directory,
     mode    => 0755,
+    require => Package["tuned"],
   }
 
 
