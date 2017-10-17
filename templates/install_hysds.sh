@@ -84,7 +84,7 @@ fi
 
 # export latest osaka package
 cd $OPS
-GITHUB_REPO=osaka-object-store-abstraction
+GITHUB_REPO=osaka
 PACKAGE=osaka
 if [ ! -d "$OPS/$PACKAGE" ]; then
   git clone ${GIT_URL}/hysds/${GITHUB_REPO}.git $PACKAGE
