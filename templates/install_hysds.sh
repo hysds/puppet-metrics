@@ -55,9 +55,9 @@ fi
 OAUTH_CFG="$HOME/.git_oauth_token"
 if [ -e "$OAUTH_CFG" ]; then
   source $OAUTH_CFG
-  GIT_URL="https://${GIT_OAUTH_TOKEN}@github.jpl.nasa.gov"
+  GIT_URL="https://${GIT_OAUTH_TOKEN}@github.com"
 else
-  GIT_URL="https://github.jpl.nasa.gov"
+  GIT_URL="https://github.com"
 fi
 
 
@@ -72,7 +72,7 @@ fi
 cd $OPS
 PACKAGE=prov_es
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds-org/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
@@ -87,7 +87,7 @@ cd $OPS
 GITHUB_REPO=osaka-object-store-abstraction
 PACKAGE=osaka
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds-org/${GITHUB_REPO}.git $PACKAGE
+  git clone ${GIT_URL}/hysds/${GITHUB_REPO}.git $PACKAGE
 fi
 cd $OPS/$PACKAGE
 pip install -U python-dateutil
@@ -102,7 +102,7 @@ fi
 cd $OPS
 PACKAGE=hysds_commons
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds-org/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
@@ -116,7 +116,7 @@ fi
 cd $OPS
 PACKAGE=hysds
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds-org/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 pip install -U  greenlet
 pip install -U  pytz
@@ -135,7 +135,7 @@ fi
 cd $OPS
 PACKAGE=sciflo
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds-org/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
