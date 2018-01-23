@@ -90,6 +90,8 @@ if [ ! -d "$OPS/$PACKAGE" ]; then
   git clone ${GIT_URL}/hysds/${GITHUB_REPO}.git $PACKAGE
 fi
 cd $OPS/$PACKAGE
+pip install -U pyasn1
+pip install -U pyasn1-modules
 pip install -U python-dateutil
 pip install -e .
 if [ "$?" -ne 0 ]; then
