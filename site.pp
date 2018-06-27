@@ -13,6 +13,14 @@ class yum {
   }
 }
 
+class docker {
+   yumrepo { "docker-ce-stable":
+      baseurl => "https://download.docker.com/linux/centos/7/$architecture/stable",
+      enabled => 1,
+      gpgcheck => 0
+   }
+}
+
 node 'default' {
 
   # define stages
@@ -25,6 +33,7 @@ node 'default' {
   # if not specified, they belong to Stage[main]
   class {
     'yum':         stage => 'pre';
+    'docker':      stage => 'pre';
   }
 
   # stage order
