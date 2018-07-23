@@ -90,7 +90,7 @@ elasticsearch.password: "<%= @es_password %>"
 #elasticsearch.logQueries: false
 
 # Specifies the path where Kibana creates the process ID file.
-#pid.file: /var/run/kibana.pid
+pid.file: /home/<%= @user %>/metrics/run/kibana.pid
 
 # Enables you specify a file where Kibana stores log output.
 #logging.dest: stdout

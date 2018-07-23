@@ -489,31 +489,50 @@ class metrics {
   # install job and worker kibana configs
   #####################################################
 
-  #file { "/tmp/export.json":
-  #  ensure  => present,
-  #  content => template('metrics/export.json'),
-  #  mode    => 0644,
-  #}
+  file { "/tmp/worker_metrics.json":
+    ensure  => present,
+    content => template('metrics/worker_metrics.json'),
+    mode    => 0644,
+  }
 
 
-  #file { "/tmp/import_kibana_metrics.py":
-  #  ensure  => present,
-  #  content => template('metrics/import_kibana_metrics.py'),
-  #  owner   => $user,
-  #  group   => $group,
-  #  mode    => 0755,
-  #}
+  file { "/tmp/job_metrics.json":
+    ensure  => present,
+    content => template('metrics/job_metrics.json'),
+    mode    => 0644,
+  }
 
 
-  #exec { "import_kibana_metrics":
-  #  path    => ["/sbin", "/bin", "/usr/bin"],
-  #  command => "/tmp/import_kibana_metrics.py",
-  #  require => [
-  #              File['/tmp/import_kibana_metrics.py'],
-  #              File['/tmp/export.json'],
-  #              Service['elasticsearch'],
-  #             ],
-  #}
+  file { "/tmp/wait-for-it.sh":
+    ensure  => present,
+    content => template('metrics/wait-for-it.sh'),
+    owner   => $user,
+    group   => $group,
+    mode    => 0755,
+  }
+
+
+  file { "/tmp/import_dashboards.sh":
+    ensure  => present,
+    content => template('metrics/import_dashboards.sh'),
+    owner   => $user,
+    group   => $group,
+    mode    => 0755,
+  }
+
+
+  exec { "import_dashboards":
+    path    => ["/sbin", "/bin", "/usr/bin"],
+    command => "/tmp/import_dashboards.sh",
+    require => [
+                File['/tmp/worker_metrics.json'],
+                File['/tmp/job_metrics.json'],
+                File['/tmp/wait-for-it.sh'],
+                File['/tmp/import_dashboards.sh'],
+                File["/home/$user/kibana/config/kibana.yml"],
+                Service['elasticsearch'],
+               ],
+  }
 
 
   #####################################################
