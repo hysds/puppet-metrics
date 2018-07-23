@@ -74,12 +74,12 @@ class metrics {
 
 
   #####################################################
-  # add swap file 
+  # add swap file - DISABLED
   #####################################################
 
-  swap { '/mnt/swapfile':
-    ensure   => present,
-  }
+  #swap { '/mnt/swapfile':
+  #  ensure   => present,
+  #}
 
 
   #####################################################
@@ -119,8 +119,9 @@ class metrics {
 
   $jdk_rpm_file = "jdk-8u181-linux-x64.rpm"
   $jdk_rpm_path = "/etc/puppet/modules/metrics/files/$jdk_rpm_file"
-  $jdk_pkg_name = "jdk1.8.0_181"
-  $java_bin_path = "/usr/java/$jdk_pkg_name/jre/bin/java"
+  $jdk_pkg_name = "jdk1.8"
+  $jdk_pkg_dir = "jdk1.8.0_181-amd64"
+  $java_bin_path = "/usr/java/$jdk_pkg_dir/jre/bin/java"
 
 
   cat_split_file { "$jdk_rpm_file":
@@ -336,14 +337,6 @@ class metrics {
   }
 
 
-  tarball { "elasticsearch-head.tar.gz":
-    install_dir => "/home/$user",
-    owner => $user,
-    group => $group,
-    require => User[$user],
-  }
-
-
   cat_split_file { "logstash-6.3.1.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
@@ -371,14 +364,14 @@ class metrics {
   }
 
 
-  file { "$metrics_dir/etc/indexer.conf":
-    ensure  => present,
-    owner   => $user,
-    group   => $group,
-    mode    => 0644,
-    content => template('metrics/indexer.conf'),
-    require => File["/home/$user/logstash"],
-  }
+  #file { "$metrics_dir/etc/indexer.conf":
+  #  ensure  => present,
+  #  owner   => $user,
+  #  group   => $group,
+  #  mode    => 0644,
+  #  content => template('metrics/indexer.conf'),
+  #  require => File["/home/$user/logstash"],
+  #}
 
 
   cat_split_file { "kibana-6.3.1-linux-x86_64.tar.gz":
@@ -408,24 +401,24 @@ class metrics {
   }
 
 
-  file { "/home/$user/kibana/config/kibana.yml":
-    ensure  => present,
-    owner   => $user,
-    group   => $group,
-    mode    => 0644,
-    content => template('metrics/kibana.yml'),
-    require => File["/home/$user/kibana"],
-  }
+  #file { "/home/$user/kibana/config/kibana.yml":
+  #  ensure  => present,
+  #  owner   => $user,
+  #  group   => $group,
+  #  mode    => 0644,
+  #  content => template('metrics/kibana.yml'),
+  #  require => File["/home/$user/kibana"],
+  #}
 
 
-  file { "$metrics_dir/etc/supervisord.conf":
-    ensure  => present,
-    owner   => $user,
-    group   => $group,
-    mode    => 0644,
-    content => template('metrics/supervisord.conf'),
-    require => File["$metrics_dir/etc"],
-  }
+  #file { "$metrics_dir/etc/supervisord.conf":
+  #  ensure  => present,
+  #  owner   => $user,
+  #  group   => $group,
+  #  mode    => 0644,
+  #  content => template('metrics/supervisord.conf'),
+  #  require => File["$metrics_dir/etc"],
+  #}
 
 
   #####################################################
@@ -494,31 +487,31 @@ class metrics {
   # install job and worker kibana configs
   #####################################################
 
-  file { "/tmp/export.json":
-    ensure  => present,
-    content => template('metrics/export.json'),
-    mode    => 0644,
-  }
+  #file { "/tmp/export.json":
+  #  ensure  => present,
+  #  content => template('metrics/export.json'),
+  #  mode    => 0644,
+  #}
 
 
-  file { "/tmp/import_kibana_metrics.py":
-    ensure  => present,
-    content => template('metrics/import_kibana_metrics.py'),
-    owner   => $user,
-    group   => $group,
-    mode    => 0755,
-  }
+  #file { "/tmp/import_kibana_metrics.py":
+  #  ensure  => present,
+  #  content => template('metrics/import_kibana_metrics.py'),
+  #  owner   => $user,
+  #  group   => $group,
+  #  mode    => 0755,
+  #}
 
 
-  exec { "import_kibana_metrics":
-    path    => ["/sbin", "/bin", "/usr/bin"],
-    command => "/tmp/import_kibana_metrics.py",
-    require => [
-                File['/tmp/import_kibana_metrics.py'],
-                File['/tmp/export.json'],
-                Service['elasticsearch'],
-               ],
-  }
+  #exec { "import_kibana_metrics":
+  #  path    => ["/sbin", "/bin", "/usr/bin"],
+  #  command => "/tmp/import_kibana_metrics.py",
+  #  require => [
+  #              File['/tmp/import_kibana_metrics.py'],
+  #              File['/tmp/export.json'],
+  #              Service['elasticsearch'],
+  #             ],
+  #}
 
 
   #####################################################
@@ -531,11 +524,6 @@ class metrics {
       {
         # Kibana
         port     => "5601",
-        protocol => "tcp",
-      },
-      {
-        # ElasticSearch head
-        port     => "9100",
         protocol => "tcp",
       },
       {

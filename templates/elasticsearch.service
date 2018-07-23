@@ -5,10 +5,9 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
+RuntimeDirectory=elasticsearch
 Environment=ES_HOME=/usr/share/elasticsearch
-Environment=CONF_DIR=/etc/elasticsearch
-Environment=DATA_DIR=/var/lib/elasticsearch
-Environment=LOG_DIR=/var/log/elasticsearch
+Environment=ES_PATH_CONF=/etc/elasticsearch
 Environment=PID_DIR=/var/run/elasticsearch
 EnvironmentFile=-/etc/sysconfig/elasticsearch
 
@@ -17,14 +16,7 @@ WorkingDirectory=/usr/share/elasticsearch
 User=elasticsearch
 Group=elasticsearch
 
-ExecStartPre=/usr/share/elasticsearch/bin/elasticsearch-systemd-pre-exec
-
-ExecStart=/usr/share/elasticsearch/bin/elasticsearch \
-                                                -p ${PID_DIR}/elasticsearch.pid \
-                                                --quiet \
-                                                -Edefault.path.logs=${LOG_DIR} \
-                                                -Edefault.path.data=${DATA_DIR} \
-                                                -Edefault.path.conf=${CONF_DIR}
+ExecStart=/usr/share/elasticsearch/bin/elasticsearch -p ${PID_DIR}/elasticsearch.pid --quiet
 
 # StandardOutput is configured to redirect to journalctl since
 # some error messages may be logged in standard output before
@@ -39,12 +31,14 @@ StandardError=inherit
 LimitNOFILE=102400
 
 # Specifies the maximum number of processes
-LimitNPROC=2048
+LimitNPROC=4096
 
-# Specifies the maximum number of bytes of memory that may be locked into RAM
-# Set to "infinity" if you use the 'bootstrap.memory_lock: true' option
-# in elasticsearch.yml and 'MAX_LOCKED_MEMORY=unlimited' in /etc/sysconfig/elasticsearch
+# Specifies the maximum size of virtual memory
+LimitAS=infinity
 LimitMEMLOCK=infinity
+
+# Specifies the maximum file size
+LimitFSIZE=infinity
 
 # Disable timeout logic and wait until process is stopped
 TimeoutStopSec=0
@@ -64,4 +58,4 @@ SuccessExitStatus=143
 [Install]
 WantedBy=multi-user.target
 
-# Built for distribution-5.4.2 (distribution)
+# Built for packages-6.3.1 (packages)
