@@ -167,6 +167,8 @@ class metrics {
   #####################################################
 
   $es_heap_size = $msize_mb / 2
+  $es_user = "elastic"
+  $es_password = "elastic"
 
   package { 'elasticsearch':
     provider => rpm,
@@ -364,14 +366,14 @@ class metrics {
   }
 
 
-  #file { "$metrics_dir/etc/indexer.conf":
-  #  ensure  => present,
-  #  owner   => $user,
-  #  group   => $group,
-  #  mode    => 0644,
-  #  content => template('metrics/indexer.conf'),
-  #  require => File["/home/$user/logstash"],
-  #}
+  file { "$metrics_dir/etc/indexer.conf":
+    ensure  => present,
+    owner   => $user,
+    group   => $group,
+    mode    => 0644,
+    content => template('metrics/indexer.conf'),
+    require => File["/home/$user/logstash"],
+  }
 
 
   cat_split_file { "kibana-6.3.1-linux-x86_64.tar.gz":
