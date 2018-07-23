@@ -101,3 +101,14 @@ thread_pool.search.queue_size: 100000
 
 # enable authentication
 xpack.security.enabled: true
+
+# configure email
+xpack.notification.email.account:
+      standard_account:
+         profile: standard
+         smtp:
+             auth: false
+             starttls.enable: false
+             starttls.required: false
+             host: localhost
+             port: 25
