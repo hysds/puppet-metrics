@@ -3,12 +3,12 @@
 METRICS_DIR=<%= @metrics_dir %>
 
 
-# install elasticsearch-head dependencies
-if [ ! -e "$HOME/node/bin/grunt" ]; then
-  cd $HOME/elasticsearch-head
-  npm install
-  cd -
-fi
+## install elasticsearch-head dependencies
+#if [ ! -e "$HOME/node/bin/grunt" ]; then
+#  cd $HOME/elasticsearch-head
+#  npm install
+#  cd -
+#fi
 
 
 # create virtualenv if not found
