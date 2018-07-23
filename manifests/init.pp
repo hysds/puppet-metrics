@@ -403,24 +403,24 @@ class metrics {
   }
 
 
-  #file { "/home/$user/kibana/config/kibana.yml":
-  #  ensure  => present,
-  #  owner   => $user,
-  #  group   => $group,
-  #  mode    => 0644,
-  #  content => template('metrics/kibana.yml'),
-  #  require => File["/home/$user/kibana"],
-  #}
+  file { "/home/$user/kibana/config/kibana.yml":
+    ensure  => present,
+    owner   => $user,
+    group   => $group,
+    mode    => 0644,
+    content => template('metrics/kibana.yml'),
+    require => File["/home/$user/kibana"],
+  }
 
 
-  #file { "$metrics_dir/etc/supervisord.conf":
-  #  ensure  => present,
-  #  owner   => $user,
-  #  group   => $group,
-  #  mode    => 0644,
-  #  content => template('metrics/supervisord.conf'),
-  #  require => File["$metrics_dir/etc"],
-  #}
+  file { "$metrics_dir/etc/supervisord.conf":
+    ensure  => present,
+    owner   => $user,
+    group   => $group,
+    mode    => 0644,
+    content => template('metrics/supervisord.conf'),
+    require => File["$metrics_dir/etc"],
+  }
 
 
   #####################################################
