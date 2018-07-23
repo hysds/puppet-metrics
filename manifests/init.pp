@@ -117,9 +117,9 @@ class metrics {
   # install oracle java and set default
   #####################################################
 
-  $jdk_rpm_file = "jdk-8u131-linux-x64.rpm"
+  $jdk_rpm_file = "jdk-8u181-linux-x64.rpm"
   $jdk_rpm_path = "/etc/puppet/modules/metrics/files/$jdk_rpm_file"
-  $jdk_pkg_name = "jdk1.8.0_131"
+  $jdk_pkg_name = "jdk1.8.0_181"
   $java_bin_path = "/usr/java/$jdk_pkg_name/jre/bin/java"
 
 
@@ -170,7 +170,7 @@ class metrics {
   package { 'elasticsearch':
     provider => rpm,
     ensure   => present,
-    source   => "/etc/puppet/modules/metrics/files/elasticsearch-5.6.3.rpm",
+    source   => "/etc/puppet/modules/metrics/files/elasticsearch-6.3.1.rpm",
     require  => Exec['set-java'],
   }
 
@@ -344,30 +344,30 @@ class metrics {
   }
 
 
-  cat_split_file { "logstash-5.6.3.tar.gz":
+  cat_split_file { "logstash-6.3.1.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "logstash-5.6.3.tar.gz":
+  tarball { "logstash-6.3.1.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["logstash-5.6.3.tar.gz"],
+                Cat_split_file["logstash-6.3.1.tar.gz"],
                ]
   }
 
 
   file { "/home/$user/logstash":
     ensure => 'link',
-    target => "/home/$user/logstash-5.6.3",
+    target => "/home/$user/logstash-6.3.1",
     owner => $user,
     group => $group,
-    require => Tarball['logstash-5.6.3.tar.gz'],
+    require => Tarball['logstash-6.3.1.tar.gz'],
   }
 
 
@@ -381,20 +381,30 @@ class metrics {
   }
 
 
-  tarball { "kibana-5.6.3-linux-x86_64.tar.gz":
+  cat_split_file { "kibana-6.3.1-linux-x86_64.tar.gz":
+    install_dir => "/etc/puppet/modules/metrics/files",
+    owner       =>  $user,
+    group       =>  $group,
+  }
+
+
+  tarball { "kibana-6.3.1-linux-x86_64.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
-    require => User[$user],
+    require => [
+                User[$user],
+                Cat_split_file["kibana-6.3.1-linux-x86_64.tar.gz"],
+               ]
   }
 
  
   file { "/home/$user/kibana":
     ensure => 'link',
-    target => "/home/$user/kibana-5.6.3-linux-x86_64",
+    target => "/home/$user/kibana-6.3.1-linux-x86_64",
     owner => $user,
     group => $group,
-    require => Tarball['kibana-5.6.3-linux-x86_64.tar.gz'],
+    require => Tarball['kibana-6.3.1-linux-x86_64.tar.gz'],
   }
 
 
