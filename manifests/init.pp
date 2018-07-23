@@ -300,7 +300,9 @@ class metrics {
   file { ["$metrics_dir",
           "$metrics_dir/bin",
           "$metrics_dir/src",
-          "$metrics_dir/etc"]:
+          "$metrics_dir/etc",
+          "$metrics_dir/log",
+          "$metrics_dir/run"]:
     ensure  => directory,
     owner   => $user,
     group   => $group,
@@ -530,6 +532,7 @@ class metrics {
                 File['/tmp/wait-for-it.sh'],
                 File['/tmp/import_dashboards.sh'],
                 File["/home/$user/kibana/config/kibana.yml"],
+                File["$metrics_dir/run"],
                 Service['elasticsearch'],
                ],
   }
