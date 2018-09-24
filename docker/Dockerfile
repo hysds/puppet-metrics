@@ -40,11 +40,7 @@ COPY --chown=ops:ops --from=0 /home/ops /home/ops
 
 # link celeryconfig
 RUN set -ex \
- && ln -sf /home/ops/metrics/etc/celeryconfig.py /home/ops/metrics/ops/hysds/celeryconfig.py \
- && ln -sf /home/ops/metrics/etc/settings.cfg /home/ops/metrics/ops/mozart/settings.cfg \
- && ln -sf /home/ops/metrics/etc/settings.cfg /home/ops/metrics/ops/figaro/settings.cfg \
- && ln -sf /home/ops/metrics/etc/server.key /home/ops/metrics/ops/mozart/server.key \
- && ln -sf /home/ops/metrics/etc/server.pem /home/ops/metrics/ops/mozart/server.pem
+ && ln -sf /home/ops/metrics/etc/celeryconfig.py /home/ops/metrics/ops/hysds/celeryconfig.py
 
 # overwrite kibana installer script that uses docker hostnames
 COPY docker/install_kibana_metrics.py /tmp/install_kibana_metrics.py
