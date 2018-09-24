@@ -2,67 +2,12 @@
 # metrics class
 #####################################################
 
-class metrics {
+class metrics inherits hysds_base {
 
   #####################################################
-  # create groups and users
+  # copy user files
   #####################################################
-
-  #notify { $user: }
-  if $user == undef {
-
-    $user = 'ops'
-    $group = 'ops'
-
-    group { $group:
-      ensure     => present,
-    }
-
-
-    user { $user:
-      ensure     => present,
-      gid        =>  $group,
-      shell      => '/bin/bash',
-      home       => "/home/$user",
-      managehome => true,
-      require    => Group[$group],
-    }
-
-
-    file { "/home/$user":
-      ensure  => directory,
-      owner   => $user,
-      group   => $group,
-      mode    => 0755,
-      require => User[$user],
-    }
-
-
-    inputrc { 'root':
-      home    => '/root',
-    }
-
-    inputrc { $user:
-      home    => "/home/$user",
-      require => User[$user],
-    }
-
-
-  }
-
-
-  file { "/home/$user/.git_oauth_token":
-    ensure  => file,
-    content  => template('metrics/git_oauth_token'),
-    owner   => $user,
-    group   => $group,
-    mode    => 0600,
-    require => [
-                User[$user],
-               ],
-  }
-
-
+  
   file { "/home/$user/.bash_profile":
     ensure  => present,
     content => template('metrics/bash_profile'),
@@ -71,15 +16,6 @@ class metrics {
     mode    => 0644,
     require => User[$user],
   }
-
-
-  #####################################################
-  # add swap file - DISABLED
-  #####################################################
-
-  #swap { '/mnt/swapfile':
-  #  ensure   => present,
-  #}
 
 
   #####################################################
@@ -96,7 +32,6 @@ class metrics {
   package {
     'mailx': ensure => present;
     'httpd': ensure => present;
-    'httpd-devel': ensure => present;
     'mod_ssl': ensure => present;
     'npm': ensure => present;
     'tuned': ensure => present;
