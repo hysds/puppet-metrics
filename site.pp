@@ -40,8 +40,7 @@ node 'default' {
   Stage['pre'] -> Stage[main] -> Stage['post']
 
   # modules
-  include scientific_python
-  include cloud_utils
+  include hysds_base
   include metrics
 
 }

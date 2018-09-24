@@ -409,21 +409,6 @@ class metrics inherits hysds_base {
   }
 
 
-  service { 'httpd':
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
-    hasstatus  => true,
-    require    => [
-                   File['/etc/httpd/conf.d/autoindex.conf'],
-                   File['/etc/httpd/conf.d/welcome.conf'],
-                   File['/etc/httpd/conf.d/ssl.conf'],
-                   File['/var/www/html/index.html'],
-                   Exec['daemon-reload'],
-                  ],
-  }
-
-
   #####################################################
   # install job and worker kibana configs
   #####################################################
