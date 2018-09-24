@@ -7,4 +7,4 @@ if [ "$#" -ne 1 ]; then
 fi
 TAG=$1
 
-docker build --no-cache --rm --force-rm -t hysds/metrics:${TAG} -f docker/Dockerfile . || exit 1
+docker build --rm --force-rm -t hysds/metrics:${TAG} -f docker/Dockerfile . || exit 1
