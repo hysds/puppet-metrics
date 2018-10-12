@@ -110,7 +110,7 @@ class metrics inherits hysds_base {
     provider => rpm,
     ensure   => present,
     source   => "/etc/puppet/modules/metrics/files/elasticsearch-6.3.1.rpm",
-    require  => Exec['set-java'],
+    require  => Update_alternatives['java'],
   }
 
 
