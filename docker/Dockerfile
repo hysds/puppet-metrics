@@ -47,9 +47,13 @@ RUN set -ex \
 # copy ops home
 COPY --chown=ops:ops --from=0 /home/ops /home/ops
 
-# link celeryconfig
+# link configs
 RUN set -ex \
  && ln -sf /home/ops/metrics/etc/celeryconfig.py /home/ops/metrics/ops/hysds/celeryconfig.py
+
+# set default supervisord conf and copy includes
+COPY --chown=ops:ops docker/supervisord.conf /home/ops/metrics/etc/supervisord.conf
+COPY --chown=ops:ops docker/conf.d /home/ops/metrics/etc/conf.d
 
 # overwrite kibana installer script that uses docker hostnames
 COPY docker/install_kibana_metrics.py /tmp/install_kibana_metrics.py
@@ -58,5 +62,5 @@ COPY docker/install_kibana_metrics.py /tmp/install_kibana_metrics.py
 COPY docker/wait-for-it.sh /wait-for-it.sh
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
-EXPOSE 80 443 5601 6379 9200 9300 9001
+EXPOSE 22 80 443 5601 6379 9200 9300 9001
 CMD ["supervisord"]
