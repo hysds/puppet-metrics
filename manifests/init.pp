@@ -238,16 +238,6 @@ class metrics inherits hysds_base {
   }
 
 
-  file { "$metrics_dir/etc/supervisord.conf":
-    ensure  => present,
-    owner   => $user,
-    group   => $group,
-    mode    => 0644,
-    content => template('metrics/supervisord.conf'),
-    require => File["$metrics_dir/etc"],
-  }
-
-
   #####################################################
   # write rc.local to startup & shutdown metrics
   #####################################################
