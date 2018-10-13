@@ -55,11 +55,7 @@ RUN set -ex \
 COPY --chown=ops:ops docker/supervisord.conf /home/ops/metrics/etc/supervisord.conf
 COPY --chown=ops:ops docker/conf.d /home/ops/metrics/etc/conf.d
 
-# overwrite kibana installer script that uses docker hostnames
-COPY docker/install_kibana_metrics.py /tmp/install_kibana_metrics.py
-
 # set entrypoint
-COPY docker/wait-for-it.sh /wait-for-it.sh
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 EXPOSE 22 80 443 5601 9001

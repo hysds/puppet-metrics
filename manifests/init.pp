@@ -34,7 +34,6 @@ class metrics inherits hysds_base {
     'httpd': ensure => present;
     'mod_ssl': ensure => present;
     'npm': ensure => present;
-    'tuned': ensure => present;
   }
 
 
@@ -98,125 +97,12 @@ class metrics inherits hysds_base {
   }
 
 
-  #####################################################
-  # install elasticsearch
-  #####################################################
-
-  $es_heap_size = $msize_mb / 2
-  $es_user = "elastic"
-  $es_password = "elastic"
-
-  package { 'elasticsearch':
-    provider => rpm,
-    ensure   => present,
-    source   => "/etc/puppet/modules/metrics/files/elasticsearch-6.3.1.rpm",
-    require  => Update_alternatives['java'],
-  }
-
-
-  file { '/etc/sysconfig/elasticsearch':
-    ensure       => file,
-    content      => template('metrics/elasticsearch'),
-    mode         => 0644,
-    require      => Package['elasticsearch'],
-  }
-
-
-  file { '/etc/elasticsearch/elasticsearch.yml':
-    ensure       => file,
-    content      => template('metrics/elasticsearch.yml'),
-    mode         => 0644,
-    require      => Package['elasticsearch'],
-  }
-
-
-  file { '/etc/elasticsearch/jvm.options':
-    ensure       => file,
-    content      => template('metrics/jvm.options'),
-    mode         => 0644,
-    require      => Package['elasticsearch'],
-  }
-
-
-  file { '/usr/lib/systemd/system/elasticsearch.service':
-    ensure       => file,
-    content      => template('metrics/elasticsearch.service'),
-    mode         => 0644,
-    require      => Package['elasticsearch'],
-  }
-
-
-  service { 'elasticsearch':
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
-    hasstatus  => true,
-    require    => [
-                   File['/etc/sysconfig/elasticsearch'],
-                   File['/etc/elasticsearch/elasticsearch.yml'],
-                   File['/etc/elasticsearch/jvm.options'],
-                   File['/usr/lib/systemd/system/elasticsearch.service'],
-                   Exec['daemon-reload'],
-                  ],
-  }
-
-
-  #####################################################
-  # disable transparent hugepages for redis
-  #####################################################
-
-  file { "/etc/tuned/no-thp":
-    ensure  => directory,
-    mode    => 0755,
-    require => Package["tuned"],
-  }
-
-
-  file { "/etc/tuned/no-thp/tuned.conf":
-    ensure  => present,
-    content => template('metrics/tuned.conf'),
-    mode    => 0644,
-    require => File["/etc/tuned/no-thp"],
-  }
-
-  
-  exec { "no-thp":
-    unless  => "grep -q -e '^no-thp$' /etc/tuned/active_profile",
-    path    => ["/sbin", "/bin", "/usr/bin"],
-    command => "tuned-adm profile no-thp",
-    require => File["/etc/tuned/no-thp/tuned.conf"],
-  }
-
-
-  #####################################################
-  # install redis
-  #####################################################
-
-  package { "redis":
-    ensure   => present,
-    notify   => Exec['ldconfig'],
-    require => Exec["no-thp"],
-  }
-
-
-  file { '/etc/redis.conf':
-    ensure       => file,
-    content      => template('metrics/redis.conf'),
-    mode         => 0644,
-    require      => Package['redis'],
-  }
-
-
-  service { 'redis':
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
-    hasstatus  => true,
-    require    => [
-                   Package['redis'],
-                   Exec['daemon-reload'],
-                  ],
-  }
+   #####################################################
+   # elasticsearch user/password
+   #####################################################
+ 
+   $es_user = "elastic"
+   $es_password = "elastic"
 
 
   #####################################################
@@ -427,7 +313,7 @@ class metrics inherits hysds_base {
   }
 
 
-  file { "/tmp/wait-for-it.sh":
+  file { "/wait-for-it.sh":
     ensure  => present,
     content => template('metrics/wait-for-it.sh'),
     owner   => $user,
@@ -442,21 +328,6 @@ class metrics inherits hysds_base {
     owner   => $user,
     group   => $group,
     mode    => 0755,
-  }
-
-
-  exec { "import_dashboards":
-    path    => ["/sbin", "/bin", "/usr/bin"],
-    command => "/tmp/import_dashboards.sh",
-    require => [
-                File['/tmp/worker_metrics.json'],
-                File['/tmp/job_metrics.json'],
-                File['/tmp/wait-for-it.sh'],
-                File['/tmp/import_dashboards.sh'],
-                File["/home/$user/kibana/config/kibana.yml"],
-                File["$metrics_dir/run"],
-                Service['elasticsearch'],
-               ],
   }
 
 

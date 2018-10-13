@@ -27,9 +27,9 @@ if [ -e "/home/ops/metrics/bin/activate" ]; then
 fi
 
 # install kibana metrics
-if [ -e "/tmp/install_kibana_metrics.py" ]; then
-  /tmp/install_kibana_metrics.py
-fi
+#if [ -e "/tmp/import_dashboards.sh" ]; then
+#  /tmp/import_dashboards.sh
+#fi
 
 if [[ "$#" -eq 1  && "$@" == "supervisord" ]]; then
   set -- supervisord -n
