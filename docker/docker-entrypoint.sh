@@ -3,6 +3,7 @@ set -e
 
 # wait for redis and ES
 /wait-for-it.sh -t 30 metrics-redis:6379
+/wait-for-it.sh -t 30 metrics-elasticsearch:9200
 
 # get group id
 GID=$(id -g)
@@ -25,9 +26,9 @@ if [ -e "/home/ops/metrics/bin/activate" ]; then
   source /home/ops/metrics/bin/activate
 fi
 
-# install kibana metrics in the background; ES needs to start up via supervisord
+# install kibana metrics
 if [ -e "/tmp/install_kibana_metrics.py" ]; then
-  /tmp/install_kibana_metrics.py &
+  /tmp/install_kibana_metrics.py
 fi
 
 if [[ "$#" -eq 1  && "$@" == "supervisord" ]]; then

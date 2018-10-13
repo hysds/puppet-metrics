@@ -3,7 +3,7 @@ import os, sys, json, requests, time
 from requests.exceptions import ConnectionError
 
 
-ES_URL = "http://127.0.0.1:9200"
+ES_URL = "http://metrics-elasticsearch:9200"
 
 
 def install(cfg_file):
