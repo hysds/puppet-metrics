@@ -41,5 +41,5 @@ if __name__ == "__main__":
         except ConnectionError, e: print(e)
         time.sleep(2**count)
         count += 1
-    install('/tmp/Job_Metrics.json')
-    install('/tmp/Worker_Metrics.json')
+    install('/tmp/job_metrics.json')
+    install('/tmp/worker_metrics.json')
