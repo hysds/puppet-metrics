@@ -62,5 +62,5 @@ COPY docker/install_kibana_metrics.py /tmp/install_kibana_metrics.py
 COPY docker/wait-for-it.sh /wait-for-it.sh
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
-EXPOSE 22 80 443 5601 9200 9300 9001
+EXPOSE 22 80 443 5601 9001
 CMD ["supervisord"]
