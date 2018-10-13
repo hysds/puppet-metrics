@@ -25,9 +25,9 @@ if [ -e "/home/ops/metrics/bin/activate" ]; then
   source /home/ops/metrics/bin/activate
 fi
 
-# install kibana metrics
+# install kibana metrics in the background; ES needs to start up via supervisord
 if [ -e "/tmp/install_kibana_metrics.py" ]; then
-  /tmp/install_kibana_metrics.py
+  /tmp/install_kibana_metrics.py &
 fi
 
 if [[ "$#" -eq 1  && "$@" == "supervisord" ]]; then
