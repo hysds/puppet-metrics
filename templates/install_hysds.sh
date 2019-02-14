@@ -13,7 +13,7 @@ METRICS_DIR=<%= @metrics_dir %>
 
 # create virtualenv if not found
 if [ ! -e "$METRICS_DIR/bin/activate" ]; then
-  virtualenv --system-site-packages $METRICS_DIR
+  /opt/conda/bin/virtualenv --system-site-packages $METRICS_DIR
   echo "Created virtualenv at $METRICS_DIR."
 fi
 
@@ -29,7 +29,8 @@ pip install -U setuptools
 
 # force install supervisor
 if [ ! -e "$METRICS_DIR/bin/supervisord" ]; then
-  pip install --ignore-installed supervisor
+  #pip install --ignore-installed supervisor
+  pip install --ignore-installed git+https://github.com/Supervisor/supervisor
 fi
 
 
@@ -72,7 +73,7 @@ fi
 cd $OPS
 PACKAGE=prov_es
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
@@ -87,7 +88,7 @@ cd $OPS
 GITHUB_REPO=osaka
 PACKAGE=osaka
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds/${GITHUB_REPO}.git $PACKAGE
+  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -U pyasn1
@@ -104,7 +105,7 @@ fi
 cd $OPS
 PACKAGE=hysds_commons
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
@@ -118,7 +119,7 @@ fi
 cd $OPS
 PACKAGE=hysds
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 pip install -U  greenlet
 pip install -U  pytz
@@ -137,7 +138,7 @@ fi
 cd $OPS
 PACKAGE=sciflo
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .

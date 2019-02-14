@@ -1,10 +1,10 @@
-FROM hysds/dev:latest
+FROM hysds/dev:python3
 
 # git url to hysds dev puppet module
-ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker/install.sh
+ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker-python3/install.sh
 
 # add latest repo version to invalidate cache
-ADD https://api.github.com/repos/hysds/puppet-metrics/git/refs/heads/docker version.json
+ADD https://api.github.com/repos/hysds/puppet-metrics/git/refs/heads/docker-python3 version.json
 
 # provision via puppet
 RUN set -ex \
@@ -22,16 +22,16 @@ RUN set -ex \
  && rm -rf $HOME/.cache
 
 
-FROM hysds/base:latest
+FROM hysds/base:python3
 
 MAINTAINER Gerald Manipon (pymonger) "pymonger@gmail.com"
 LABEL description="HySDS metrics images"
 
 # git url to hysds dev puppet module
-ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker/install.sh
+ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker-python3/install.sh
 
 # add latest repo version to invalidate cache
-ADD https://api.github.com/repos/hysds/puppet-metrics/git/refs/heads/docker version.json
+ADD https://api.github.com/repos/hysds/puppet-metrics/git/refs/heads/docker-python3 version.json
 
 # provision via puppet
 RUN set -ex \
