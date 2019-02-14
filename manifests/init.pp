@@ -14,7 +14,7 @@ class metrics inherits hysds_base {
     owner   => $user,
     group   => $group,
     mode    => 0644,
-    require => User[$user],
+    require => File_line["user_source_anaconda"],
   }
 
 
