@@ -124,9 +124,9 @@ pip install -U  greenlet
 pip install -U  pytz
 pip uninstall -y celery
 cd $OPS/$PACKAGE/third_party/celery-v3.1.25.pqueue
-pip install --process-dependency-links -e .
+pip install -e .
 cd $OPS/$PACKAGE
-pip install --process-dependency-links -e .
+pip install -e .
 if [ "$?" -ne 0 ]; then
   echo "Failed to run 'pip install -e .' for $PACKAGE."
   exit 1
