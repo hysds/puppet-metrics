@@ -123,9 +123,6 @@ if [ ! -d "$OPS/$PACKAGE" ]; then
 fi
 pip install -U  greenlet
 pip install -U  pytz
-pip uninstall -y celery
-cd $OPS/$PACKAGE/third_party/celery-v3.1.25.pqueue
-pip install -e .
 cd $OPS/$PACKAGE
 pip install -e .
 if [ "$?" -ne 0 ]; then
