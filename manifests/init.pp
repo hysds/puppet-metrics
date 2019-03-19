@@ -2,76 +2,7 @@
 # metrics class
 #####################################################
 
-class metrics {
-
-  #####################################################
-  # create groups and users
-  #####################################################
-
-  #notify { $user: }
-  if $user == undef {
-
-    $user = 'ops'
-    $group = 'ops'
-
-    group { $group:
-      ensure     => present,
-    }
-
-
-    user { $user:
-      ensure     => present,
-      gid        =>  $group,
-      shell      => '/bin/bash',
-      home       => "/home/$user",
-      managehome => true,
-      require    => Group[$group],
-    }
-
-
-    file { "/home/$user":
-      ensure  => directory,
-      owner   => $user,
-      group   => $group,
-      mode    => 0755,
-      require => User[$user],
-    }
-
-
-    inputrc { 'root':
-      home    => '/root',
-    }
-
-    inputrc { $user:
-      home    => "/home/$user",
-      require => User[$user],
-    }
-
-
-  }
-
-
-  file { "/home/$user/.git_oauth_token":
-    ensure  => file,
-    content  => template('metrics/git_oauth_token'),
-    owner   => $user,
-    group   => $group,
-    mode    => 0600,
-    require => [
-                User[$user],
-               ],
-  }
-
-
-  file { "/home/$user/.bash_profile":
-    ensure  => present,
-    content => template('metrics/bash_profile'),
-    owner   => $user,
-    group   => $group,
-    mode    => 0644,
-    require => User[$user],
-  }
-
+class metrics inherits scientific_python {
 
   #####################################################
   # add swap file - DISABLED
@@ -80,6 +11,20 @@ class metrics {
   #swap { '/mnt/swapfile':
   #  ensure   => present,
   #}
+
+
+  #####################################################
+  # copy user files
+  #####################################################
+
+  file { "/home/$user/.bash_profile":
+    ensure  => present,
+    content => template('metrics/bash_profile'),
+    owner   => $user,
+    group   => $group,
+    mode    => 0644,
+    require => File_line["user_source_anaconda"],
+  }
 
 
   #####################################################

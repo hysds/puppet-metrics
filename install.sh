@@ -56,6 +56,34 @@ fi
 
 
 ##########################################
+# export hysds_base puppet module
+##########################################
+
+git_loc="${git_url}/hysds/puppet-hysds_base"
+mod_dir=$mods_dir/hysds_base
+site_pp=$mod_dir/site.pp
+
+# check that module is here; if not, export it
+if [ ! -d $mod_dir ]; then
+  $git_cmd clone -b python3 --single-branch $git_loc $mod_dir
+fi
+
+
+##########################################
+# export hysds_dev puppet module
+##########################################
+
+git_loc="${git_url}/hysds/puppet-hysds_dev"
+mod_dir=$mods_dir/hysds_dev
+site_pp=$mod_dir/site.pp
+
+# check that module is here; if not, export it
+if [ ! -d $mod_dir ]; then
+  $git_cmd clone -b python3 --single-branch $git_loc $mod_dir
+fi
+
+
+##########################################
 # export scientific_python puppet module
 ##########################################
 
@@ -65,7 +93,7 @@ site_pp=$mod_dir/site.pp
 
 # check that module is here; if not, export it
 if [ ! -d $mod_dir ]; then
-  $git_cmd clone $git_loc $mod_dir
+  $git_cmd clone -b python3 --single-branch $git_loc $mod_dir
 fi
 
 
@@ -93,7 +121,7 @@ site_pp=$mod_dir/site.pp
 
 # check that module is here; if not, export it
 if [ ! -d $mod_dir ]; then
-  $git_cmd clone $git_loc $mod_dir
+  $git_cmd clone -b python3 --single-branch $git_loc $mod_dir
 fi
 
 
