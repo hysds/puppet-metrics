@@ -73,7 +73,7 @@ fi
 cd $OPS
 PACKAGE=prov_es
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
@@ -88,7 +88,7 @@ cd $OPS
 GITHUB_REPO=osaka
 PACKAGE=osaka
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -U pyasn1
@@ -105,7 +105,7 @@ fi
 cd $OPS
 PACKAGE=hysds_commons
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
@@ -119,7 +119,7 @@ fi
 cd $OPS
 PACKAGE=hysds
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE/third_party/celery-v4.2.1
 pip install -e .
@@ -135,7 +135,7 @@ fi
 cd $OPS
 PACKAGE=sciflo
 if [ ! -d "$OPS/$PACKAGE" ]; then
-  git clone --single-branch -b python3 ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $OPS/$PACKAGE
 pip install -e .
