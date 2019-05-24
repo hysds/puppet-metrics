@@ -3,7 +3,7 @@ set -e
 
 # wait for redis and ES
 /wait-for-it.sh -t 30 metrics-redis:6379
-/wait-for-it.sh -t 30 metrics-elasticsearch:9200
+/wait-for-it.sh -t 60 metrics-elasticsearch:9200
 
 # get group id
 GID=$(id -g)
