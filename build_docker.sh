@@ -20,6 +20,7 @@ fi
   
   
 # build
+docker system prune -f || :
 docker build --progress=plain --rm --force-rm \
   -t hysds/metrics:${TAG} -f docker/Dockerfile --build-arg RELEASE=${TAG} \
   --secret id=git_oauth_token,src=$OAUTH_CFG . || exit 1
