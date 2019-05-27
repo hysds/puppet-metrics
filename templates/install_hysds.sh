@@ -49,3 +49,7 @@ METRICS_DIR=<%= @metrics_dir %>
 
 # source virtualenv
 source $METRICS_DIR/bin/activate
+
+
+# cleanup pkgs
+rm -rf $METRICS_DIR/pkgs/*
