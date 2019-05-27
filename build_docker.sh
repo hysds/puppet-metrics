@@ -7,4 +7,19 @@ if [ "$#" -ne 1 ]; then
 fi
 TAG=$1
 
-docker build --rm --force-rm -t hysds/metrics:${TAG} -f docker/Dockerfile --build-arg RELEASE=${TAG} . || exit 1
+
+# enable docker buildkit to allow build secrets
+export DOCKER_BUILDKIT=1
+  
+
+# set oauth token to bypass github API rate limits
+OAUTH_CFG="$HOME/.git_oauth_token"
+if [ ! -e "$OAUTH_CFG" ]; then
+  touch $OAUTH_CFG # create empty creds file for unauthenticated builds
+fi
+  
+  
+# build
+docker build --no-cache --progress=plain --rm --force-rm \
+  -t hysds/metrics:${TAG} -f docker/Dockerfile --build-arg RELEASE=${TAG} \
+  --secret id=git_oauth_token,src=$OAUTH_CFG . || exit 1
