@@ -23,7 +23,7 @@ class metrics inherits scientific_python {
     owner   => $user,
     group   => $group,
     mode    => 0644,
-    require => File_line["user_source_anaconda"],
+    require => User[$user],
   }
 
 
