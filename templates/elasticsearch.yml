@@ -91,10 +91,11 @@ http.cors.enabled: true
 http.cors.allow-origin: "*"
 http.cors.allow-headers: Authorization
 
+# increase threadpool for search and index
 # to fix org.elasticsearch.common.util.concurrent.EsRejectedExecutionException: 
 # rejected execution of org.elasticsearch.transport.TransportService errors
-thread_pool.bulk.queue_size: 100000
 thread_pool.search.queue_size: 100000
+thread_pool.write.queue_size: 100000
 
 # allow x-pack to create the following indices:
 #action.auto_create_index: .security,.monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*,logstash-*
