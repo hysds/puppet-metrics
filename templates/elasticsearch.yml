@@ -101,15 +101,15 @@ thread_pool.write.queue_size: 100000
 #action.auto_create_index: .security,.monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*,logstash-*
 
 # enable authentication
-xpack.security.enabled: true
+#xpack.security.enabled: true
 
 # configure email
-xpack.notification.email.account:
-      standard_account:
-         profile: standard
-         smtp:
-             auth: false
-             starttls.enable: false
-             starttls.required: false
-             host: localhost
-             port: 25
+#xpack.notification.email.account:
+#      standard_account:
+#         profile: standard
+#         smtp:
+#             auth: false
+#             starttls.enable: false
+#             starttls.required: false
+#             host: localhost
+#             port: 25
