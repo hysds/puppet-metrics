@@ -410,7 +410,7 @@ class metrics inherits scientific_python {
 
   file { "/home/$user/kibana":
     ensure => 'link',
-    target => "/home/$user/kibana-7.1.1",
+    target => "/home/$user/kibana-7.1.1-linux-x86_64",
     owner => $user,
     group => $group,
     require => Tarball["kibana-7.1.1-linux-x86_64.tar.gz"],
