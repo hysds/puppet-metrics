@@ -43,7 +43,6 @@ class metrics inherits scientific_python {
     'httpd': ensure => present;
     'httpd-devel': ensure => present;
     'mod_ssl': ensure => present;
-    'npm': ensure => present;
   }
 
 
@@ -62,11 +61,10 @@ class metrics inherits scientific_python {
   # install oracle java and set default
   #####################################################
 
-  $jdk_rpm_file = "jdk-8u181-linux-x64.rpm"
+  $jdk_rpm_file = "jdk-8u241-linux-x64.rpm"
   $jdk_rpm_path = "/etc/puppet/modules/metrics/files/$jdk_rpm_file"
-  $jdk_pkg_name = "jdk1.8"
-  $jdk_pkg_dir = "jdk1.8.0_181-amd64"
-  $java_bin_path = "/usr/java/$jdk_pkg_dir/jre/bin/java"
+  $jdk_pkg_name = "jdk1.8.x86_64"
+  $java_bin_path = "/usr/java/jdk1.8.0_241-amd64/jre/bin/java"
 
 
   cat_split_file { "$jdk_rpm_file":
@@ -112,14 +110,24 @@ class metrics inherits scientific_python {
   #####################################################
 
   $es_heap_size = $msize_mb / 2
-  $es_user = "elastic"
-  $es_password = "elastic"
+  $es_rpm_file = "elasticsearch-7.1.1-x86_64.rpm"
+  $es_rpm_path = "/etc/puppet/modules/metrics/files/$es_rpm_file"
+
+  cat_split_file { "$es_rpm_file":
+    install_dir => "/etc/puppet/modules/metrics/files",
+    owner       =>  $user,
+    group       =>  $group,
+  }
+
 
   package { 'elasticsearch':
     provider => rpm,
     ensure   => present,
-    source   => "/etc/puppet/modules/metrics/files/elasticsearch-6.3.1.rpm",
-    require  => Exec['set-java'],
+    source   => $es_rpm_path,
+    require  => [
+                  Cat_split_file["$es_rpm_file"],
+                  Exec['set-java'],
+                ],
   }
 
 
@@ -134,6 +142,14 @@ class metrics inherits scientific_python {
   file { '/etc/elasticsearch/elasticsearch.yml':
     ensure       => file,
     content      => template('metrics/elasticsearch.yml'),
+    mode         => 0644,
+    require      => Package['elasticsearch'],
+  }
+
+
+  file { '/etc/elasticsearch/log4j2.properties':
+    ensure       => file,
+    content      => template('metrics/log4j2.properties'),
     mode         => 0644,
     require      => Package['elasticsearch'],
   }
@@ -163,6 +179,7 @@ class metrics inherits scientific_python {
     require    => [
                    File['/etc/sysconfig/elasticsearch'],
                    File['/etc/elasticsearch/elasticsearch.yml'],
+                   File['/etc/elasticsearch/log4j2.properties'],
                    File['/etc/elasticsearch/jvm.options'],
                    File['/usr/lib/systemd/system/elasticsearch.service'],
                    Exec['daemon-reload'],
@@ -197,6 +214,31 @@ class metrics inherits scientific_python {
 
 
   #####################################################
+  # tune kernel for high performance
+  #####################################################
+
+  file { "/usr/lib/sysctl.d":
+    ensure  => directory,
+    mode    => 0755,
+  }
+
+
+  file { "/usr/lib/sysctl.d/metrics.conf":
+    ensure  => present,
+    content => template('metrics/metrics.conf'),
+    mode    => 0644,
+    require => File["/usr/lib/sysctl.d"],
+  }
+
+
+  exec { "sysctl-system":
+    path    => ["/sbin", "/bin", "/usr/bin"],
+    command => "/sbin/sysctl --system",
+    require => File["/usr/lib/sysctl.d/metrics.conf"],
+  }
+
+
+  #####################################################
   # install redis
   #####################################################
 
@@ -215,13 +257,38 @@ class metrics inherits scientific_python {
   }
 
 
+  file { ["/etc/systemd/system/redis.service.d",
+         "/etc/systemd/system/redis-sentinel.service.d"]:
+    ensure  => directory,
+    mode    => 0755,
+  }
+
+
+  file { "/etc/systemd/system/redis.service.d/limit.conf":
+    ensure  => present,
+    content => template('metrics/redis_service.conf'),
+    mode    => 0644,
+    require => File["/etc/systemd/system/redis.service.d"],
+  }
+
+
+  file { "/etc/systemd/system/redis-sentinel.service.d/limit.conf":
+    ensure  => present,
+    content => template('metrics/redis_service.conf'),
+    mode    => 0644,
+    require => File["/etc/systemd/system/redis-sentinel.service.d"],
+  }
+
+
   service { 'redis':
     ensure     => running,
     enable     => true,
     hasrestart => true,
     hasstatus  => true,
     require    => [
-                   Package['redis'],
+                   File['/etc/redis.conf'],
+                   File['/etc/systemd/system/redis.service.d/limit.conf'],
+                   File['/etc/systemd/system/redis-sentinel.service.d/limit.conf'],
                    Exec['daemon-reload'],
                   ],
   }
@@ -286,30 +353,30 @@ class metrics inherits scientific_python {
   }
 
 
-  cat_split_file { "logstash-6.3.1.tar.gz":
+  cat_split_file { "logstash-7.1.1.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "logstash-6.3.1.tar.gz":
+  tarball { "logstash-7.1.1.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["logstash-6.3.1.tar.gz"],
+                Cat_split_file["logstash-7.1.1.tar.gz"],
                ]
   }
 
 
   file { "/home/$user/logstash":
     ensure => 'link',
-    target => "/home/$user/logstash-6.3.1",
+    target => "/home/$user/logstash-7.1.1",
     owner => $user,
     group => $group,
-    require => Tarball['logstash-6.3.1.tar.gz'],
+    require => Tarball['logstash-7.1.1.tar.gz'],
   }
 
 
@@ -323,41 +390,41 @@ class metrics inherits scientific_python {
   }
 
 
-  cat_split_file { "kibana-6.3.1-linux-x86_64.tar.gz":
+  cat_split_file { "kibana-7.1.1-linux-x86_64.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "kibana-6.3.1-linux-x86_64.tar.gz":
+  tarball { "kibana-7.1.1-linux-x86_64.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["kibana-6.3.1-linux-x86_64.tar.gz"],
-               ]
+                Cat_split_file["kibana-7.1.1-linux-x86_64.tar.gz"],
+               ],
   }
 
- 
+
   file { "/home/$user/kibana":
     ensure => 'link',
-    target => "/home/$user/kibana-6.3.1-linux-x86_64",
+    target => "/home/$user/kibana-7.1.1",
     owner => $user,
     group => $group,
-    require => Tarball['kibana-6.3.1-linux-x86_64.tar.gz'],
+    require => Tarball["kibana-7.1.1-linux-x86_64.tar.gz"],
   }
 
 
-  file { "/home/$user/kibana/config/kibana.yml":
-    ensure  => present,
-    owner   => $user,
-    group   => $group,
-    mode    => 0644,
-    content => template('metrics/kibana.yml'),
-    require => File["/home/$user/kibana"],
-  }
+#  file { "/home/$user/kibana/config/kibana.yml":
+#    ensure  => present,
+#    owner   => $user,
+#    group   => $group,
+#    mode    => 0644,
+#    content => template('metrics/kibana.yml'),
+#    require => File["/home/$user/kibana"],
+#  }
 
 
   file { "$metrics_dir/etc/supervisord.conf":
@@ -468,19 +535,19 @@ class metrics inherits scientific_python {
   }
 
 
-  exec { "import_dashboards":
-    path    => ["/sbin", "/bin", "/usr/bin"],
-    command => "/tmp/import_dashboards.sh",
-    require => [
-                File['/tmp/worker_metrics.json'],
-                File['/tmp/job_metrics.json'],
-                File['/tmp/wait-for-it.sh'],
-                File['/tmp/import_dashboards.sh'],
-                File["/home/$user/kibana/config/kibana.yml"],
-                File["$metrics_dir/run"],
-                Service['elasticsearch'],
-               ],
-  }
+#  exec { "import_dashboards":
+#    path    => ["/sbin", "/bin", "/usr/bin"],
+#    command => "/tmp/import_dashboards.sh",
+#    require => [
+#                File['/tmp/worker_metrics.json'],
+#                File['/tmp/job_metrics.json'],
+#                File['/tmp/wait-for-it.sh'],
+#                File['/tmp/import_dashboards.sh'],
+#                File["/home/$user/kibana/config/kibana.yml"],
+#                File["$metrics_dir/run"],
+#                Service['elasticsearch'],
+#               ],
+#  }
 
 
   #####################################################

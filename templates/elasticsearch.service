@@ -6,6 +6,7 @@ After=network-online.target
 
 [Service]
 RuntimeDirectory=elasticsearch
+PrivateTmp=true
 Environment=ES_HOME=/usr/share/elasticsearch
 Environment=ES_PATH_CONF=/etc/elasticsearch
 Environment=PID_DIR=/var/run/elasticsearch
@@ -27,6 +28,9 @@ ExecStart=/usr/share/elasticsearch/bin/elasticsearch -p ${PID_DIR}/elasticsearch
 StandardOutput=journal
 StandardError=inherit
 
+# Specifies the maximum memory size that can be locked
+LimitMEMLOCK=infinity
+
 # Specifies the maximum file descriptor number that can be opened by this process
 LimitNOFILE=102400
 
@@ -35,7 +39,6 @@ LimitNPROC=4096
 
 # Specifies the maximum size of virtual memory
 LimitAS=infinity
-LimitMEMLOCK=infinity
 
 # Specifies the maximum file size
 LimitFSIZE=infinity
@@ -58,4 +61,4 @@ SuccessExitStatus=143
 [Install]
 WantedBy=multi-user.target
 
-# Built for packages-6.3.1 (packages)
+# Built for packages-7.1.1 (packages)
