@@ -43,6 +43,7 @@ class metrics inherits scientific_python {
     'httpd': ensure => present;
     'httpd-devel': ensure => present;
     'mod_ssl': ensure => present;
+    'npm': ensure => present;
   }
 
 
