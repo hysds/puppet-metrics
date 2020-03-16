@@ -33,6 +33,7 @@ class metrics inherits hysds_base {
     'mailx': ensure => present;
     'httpd': ensure => present;
     'mod_ssl': ensure => present;
+    'npm': ensure => present;
   }
 
 
