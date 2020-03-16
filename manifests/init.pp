@@ -33,7 +33,6 @@ class metrics inherits hysds_base {
     'mailx': ensure => present;
     'httpd': ensure => present;
     'mod_ssl': ensure => present;
-    'npm': ensure => present;
   }
 
 
@@ -52,11 +51,10 @@ class metrics inherits hysds_base {
   # install oracle java and set default
   #####################################################
 
-  $jdk_rpm_file = "jdk-8u181-linux-x64.rpm"
+  $jdk_rpm_file = "jdk-8u241-linux-x64.rpm"
   $jdk_rpm_path = "/etc/puppet/modules/metrics/files/$jdk_rpm_file"
-  $jdk_pkg_name = "jdk1.8"
-  $jdk_pkg_dir = "jdk1.8.0_181-amd64"
-  $java_bin_path = "/usr/java/$jdk_pkg_dir/jre/bin/java"
+  $jdk_pkg_name = "jdk1.8.x86_64"
+  $java_bin_path = "/usr/java/jdk1.8.0_241-amd64/jre/bin/java"
 
 
   cat_split_file { "$jdk_rpm_file":
@@ -95,14 +93,6 @@ class metrics inherits hysds_base {
   else {
     $msize_mb = $::memorysize_mb
   }
-
-
-   #####################################################
-   # elasticsearch user/password
-   #####################################################
- 
-   $es_user = "elastic"
-   $es_password = "elastic"
 
 
   #####################################################
@@ -164,30 +154,30 @@ class metrics inherits hysds_base {
   }
 
 
-  cat_split_file { "logstash-6.3.1.tar.gz":
+  cat_split_file { "logstash-7.1.1.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "logstash-6.3.1.tar.gz":
+  tarball { "logstash-7.1.1.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["logstash-6.3.1.tar.gz"],
+                Cat_split_file["logstash-7.1.1.tar.gz"],
                ]
   }
 
 
   file { "/home/$user/logstash":
     ensure => 'link',
-    target => "/home/$user/logstash-6.3.1",
+    target => "/home/$user/logstash-7.1.1",
     owner => $user,
     group => $group,
-    require => Tarball['logstash-6.3.1.tar.gz'],
+    require => Tarball['logstash-7.1.1.tar.gz'],
   }
 
 
@@ -201,41 +191,41 @@ class metrics inherits hysds_base {
   }
 
 
-  cat_split_file { "kibana-6.3.1-linux-x86_64.tar.gz":
+  cat_split_file { "kibana-7.1.1-linux-x86_64.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "kibana-6.3.1-linux-x86_64.tar.gz":
+  tarball { "kibana-7.1.1-linux-x86_64.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["kibana-6.3.1-linux-x86_64.tar.gz"],
-               ]
+                Cat_split_file["kibana-7.1.1-linux-x86_64.tar.gz"],
+               ],
   }
 
- 
+
   file { "/home/$user/kibana":
     ensure => 'link',
-    target => "/home/$user/kibana-6.3.1-linux-x86_64",
+    target => "/home/$user/kibana-7.1.1-linux-x86_64",
     owner => $user,
     group => $group,
-    require => Tarball['kibana-6.3.1-linux-x86_64.tar.gz'],
+    require => Tarball["kibana-7.1.1-linux-x86_64.tar.gz"],
   }
 
 
-  file { "/home/$user/kibana/config/kibana.yml":
-    ensure  => present,
-    owner   => $user,
-    group   => $group,
-    mode    => 0644,
-    content => template('metrics/kibana.yml'),
-    require => File["/home/$user/kibana"],
-  }
+#  file { "/home/$user/kibana/config/kibana.yml":
+#    ensure  => present,
+#    owner   => $user,
+#    group   => $group,
+#    mode    => 0644,
+#    content => template('metrics/kibana.yml'),
+#    require => File["/home/$user/kibana"],
+#  }
 
 
   #####################################################
