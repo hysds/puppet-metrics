@@ -42,6 +42,7 @@ if [ ! -d "$HOME/$PACKAGE" ]; then
 fi
 cd $HOME/$PACKAGE
 if [ "$release" = "develop-es7" ]; then
+  git checkout $release
   ./install.sh -d $token metrics
 else
   ./install.sh -r $release $token metrics
