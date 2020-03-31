@@ -2,13 +2,13 @@
 FROM hysds/dev:latest
 
 # git url to hysds dev puppet module
-ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker-es7/install.sh
+ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker/install.sh
 
 # get release to install
-ARG RELEASE=develop-es7
+ARG RELEASE=develop
 
 # add latest repo version to invalidate cache
-ADD https://api.github.com/repos/hysds/puppet-metrics/git/refs/heads/docker-es7 version.json
+ADD https://api.github.com/repos/hysds/puppet-metrics/git/refs/heads/docker version.json
 
 # provision via puppet
 RUN --mount=type=secret,id=git_oauth_token sudo cp /run/secrets/git_oauth_token $HOME/.git_oauth_token \
@@ -35,7 +35,7 @@ MAINTAINER Gerald Manipon (pymonger) "pymonger@gmail.com"
 LABEL description="HySDS metrics images"
 
 # git url to hysds dev puppet module
-ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker-es7/install.sh
+ENV GIT_URL https://github.com/hysds/puppet-metrics/raw/docker/install.sh
 
 # provision via puppet
 RUN set -ex \
