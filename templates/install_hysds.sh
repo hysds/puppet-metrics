@@ -41,8 +41,7 @@ if [ ! -d "$HOME/$PACKAGE" ]; then
   git clone ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $HOME/$PACKAGE
-if [ "$release" = "develop-es7" ]; then
-  git checkout $release
+if [ "$release" = "develop" ]; then
   ./install.sh -d $token metrics
 else
   ./install.sh -r $release $token metrics
