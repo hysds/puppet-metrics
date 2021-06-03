@@ -111,7 +111,7 @@ class metrics inherits scientific_python {
   #####################################################
 
   $es_heap_size = $msize_mb / 2
-  $es_rpm_file = "elasticsearch-7.1.1-x86_64.rpm"
+  $es_rpm_file = "elasticsearch-7.9.3-x86_64.rpm"
   $es_rpm_path = "/etc/puppet/modules/metrics/files/$es_rpm_file"
 
   cat_split_file { "$es_rpm_file":
@@ -354,30 +354,30 @@ class metrics inherits scientific_python {
   }
 
 
-  cat_split_file { "logstash-7.1.1.tar.gz":
+  cat_split_file { "logstash-7.9.3.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "logstash-7.1.1.tar.gz":
+  tarball { "logstash-7.9.3.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["logstash-7.1.1.tar.gz"],
+                Cat_split_file["logstash-7.9.3.tar.gz"],
                ]
   }
 
 
   file { "/home/$user/logstash":
     ensure => 'link',
-    target => "/home/$user/logstash-7.1.1",
+    target => "/home/$user/logstash-7.9.3",
     owner => $user,
     group => $group,
-    require => Tarball['logstash-7.1.1.tar.gz'],
+    require => Tarball['logstash-7.9.3.tar.gz'],
   }
 
 
@@ -391,30 +391,30 @@ class metrics inherits scientific_python {
   }
 
 
-  cat_split_file { "kibana-7.1.1-linux-x86_64.tar.gz":
+  cat_split_file { "kibana-7.9.3-linux-x86_64.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "kibana-7.1.1-linux-x86_64.tar.gz":
+  tarball { "kibana-7.9.3-linux-x86_64.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["kibana-7.1.1-linux-x86_64.tar.gz"],
+                Cat_split_file["kibana-7.9.3-linux-x86_64.tar.gz"],
                ],
   }
 
 
   file { "/home/$user/kibana":
     ensure => 'link',
-    target => "/home/$user/kibana-7.1.1-linux-x86_64",
+    target => "/home/$user/kibana-7.9.3-linux-x86_64",
     owner => $user,
     group => $group,
-    require => Tarball["kibana-7.1.1-linux-x86_64.tar.gz"],
+    require => Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
   }
 
 
