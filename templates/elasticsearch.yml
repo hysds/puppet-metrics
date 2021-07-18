@@ -94,11 +94,11 @@ http.cors.allow-headers: Authorization
 # increase thread pools for get, write and search
 # to fix org.elasticsearch.common.util.concurrent.EsRejectedExecutionException: 
 # rejected execution of org.elasticsearch.transport.TransportService errors
-+thread_pool.get.queue_size: 100000
- thread_pool.write.queue_size: 100000
-+thread_pool.search.queue_size: 5000
-+thread_pool.search.min_queue_size: 2000
-+thread_pool.search.max_queue_size: 10000
+thread_pool.get.queue_size: 100000
+thread_pool.write.queue_size: 100000
+thread_pool.search.queue_size: 7500
+thread_pool.search.min_queue_size: 5000
+thread_pool.search.max_queue_size: 10000
 
 # allow x-pack to create the following indices:
 #action.auto_create_index: .security,.monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*,logstash-*
