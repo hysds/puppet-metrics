@@ -1,6 +1,19 @@
 #!/bin/bash
+set -e
 
-mods_dir=/etc/puppet/modules
+if [ "$#" -ne 3 ]; then
+  echo "Usage: $0 <github org> <branch> <base branch>"
+  echo "e.g.: $0 hysds master master"
+  echo "e.g.: $0 hysds python2 develop"
+  echo "e.g.: $0 pymonger python3 develop"
+  exit 1
+fi
+ORG=$1
+BRANCH=$2
+BASE_BRANCH=$3
+
+mods_dir=/etc/puppetlabs/code/modules
+mkdir -p $mods_dir
 cd $mods_dir
 
 ##########################################
@@ -20,18 +33,13 @@ fi
 
 git_cmd=`which git`
 if [ $? -ne 0 ]; then
-  echo "Subversion must be installed. Run 'yum install git'."
+  echo "Subversion must be installed. Run 'dnf install git'."
   exit 1
 fi
 
 puppet_cmd=`which puppet`
 if [ $? -ne 0 ]; then
-  echo "Puppet must be installed. Run 'yum install puppet'."
-  exit 1
-fi
-
-if [ ! -d "/usr/share/puppet/modules/firewalld" ]; then
-  echo "puppet-firewalld must be installed. Run 'yum install puppet-firewalld'."
+  echo "Puppet must be installed. Run 'dnf install puppet'."
   exit 1
 fi
 
@@ -56,16 +64,28 @@ fi
 
 
 ##########################################
+# install puppetlab's firewall module
+##########################################
+
+mod_dir=$mods_dir/firewall
+
+# check that module is here; if not, export it
+if [ ! -d $mod_dir ]; then
+  $puppet_cmd module install puppetlabs-firewall
+fi
+
+
+##########################################
 # export hysds_base puppet module
 ##########################################
 
-git_loc="${git_url}/hysds/puppet-hysds_base"
+git_loc="${git_url}/${ORG}/puppet-hysds_base"
 mod_dir=$mods_dir/hysds_base
 site_pp=$mod_dir/site.pp
 
 # check that module is here; if not, export it
 if [ ! -d $mod_dir ]; then
-  $git_cmd clone $git_loc $mod_dir
+  $git_cmd clone --single-branch -b $BASE_BRANCH $git_loc $mod_dir
 fi
 
 
@@ -73,13 +93,13 @@ fi
 # export metrics puppet module
 ##########################################
 
-git_loc="${git_url}/hysds/puppet-metrics"
+git_loc="${git_url}/${ORG}/puppet-metrics"
 mod_dir=$mods_dir/metrics
 site_pp=$mod_dir/site.pp
 
 # check that module is here; if not, export it
 if [ ! -d $mod_dir ]; then
-  $git_cmd clone -b docker --single-branch $git_loc $mod_dir
+  $git_cmd clone --single-branch -b $BRANCH $git_loc $mod_dir
 fi
 
 
