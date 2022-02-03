@@ -50,9 +50,7 @@ ARG BASE_BRANCH
 ENV GIT_URL https://github.com/${ORG}/puppet-metrics/raw/${BRANCH}/install.sh
 
 # provision via puppet
-RUN --mount=type=secret,id=git_oauth_token sudo cp /run/secrets/git_oauth_token $HOME/.git_oauth_token \
- && sudo chown ops:ops $HOME/.git_oauth_token \
- && set -ex \
+RUN set -ex \
  && sudo dnf update -y \
  && sudo curl -skL ${GIT_URL} > /tmp/install.sh \
  && sudo chmod 755 /tmp/install.sh \
