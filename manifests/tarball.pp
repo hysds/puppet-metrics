@@ -6,7 +6,7 @@ define metrics::tarball($pkg_tar=$title, $install_dir, $owner, $group) {
       ensure  => directory,
       owner   => $owner,
       group   => $group,
-      mode    => 0755,
+      mode    => "0755",
     }
   }
 
