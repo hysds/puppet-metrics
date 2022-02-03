@@ -53,13 +53,13 @@ class metrics inherits hysds_base {
   #####################################################
 
   $jdk_rpm_file = "jdk-8u241-linux-x64.rpm"
-  $jdk_rpm_path = "/etc/puppet/modules/metrics/files/$jdk_rpm_file"
+  $jdk_rpm_path = "/etc/puppetlabs/code/modules/metrics/files/$jdk_rpm_file"
   $jdk_pkg_name = "jdk1.8.x86_64"
   $java_bin_path = "/usr/java/jdk1.8.0_241-amd64/jre/bin/java"
 
 
   metrics::cat_split_file { "$jdk_rpm_file":
-    install_dir => "/etc/puppet/modules/metrics/files",
+    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
@@ -156,7 +156,7 @@ class metrics inherits hysds_base {
 
 
   metrics::cat_split_file { "logstash-7.9.3.tar.gz":
-    install_dir => "/etc/puppet/modules/metrics/files",
+    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
@@ -193,7 +193,7 @@ class metrics inherits hysds_base {
 
 
   metrics::cat_split_file { "kibana-7.9.3-linux-x86_64.tar.gz":
-    install_dir => "/etc/puppet/modules/metrics/files",
+    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
