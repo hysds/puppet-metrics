@@ -70,7 +70,7 @@ class metrics inherits hysds_base {
     ensure   => present,
     source   => $jdk_rpm_path,
     notify   => Exec['ldconfig'],
-    require     => Cat_split_file["$jdk_rpm_file"],
+    require     => Metrics::Cat_split_file["$jdk_rpm_file"],
   }
 
 
@@ -168,7 +168,7 @@ class metrics inherits hysds_base {
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["logstash-7.9.3.tar.gz"],
+                Metrics::Cat_split_file["logstash-7.9.3.tar.gz"],
                ]
   }
 
@@ -178,7 +178,7 @@ class metrics inherits hysds_base {
     target => "/home/$user/logstash-7.9.3",
     owner => $user,
     group => $group,
-    require => Tarball['logstash-7.9.3.tar.gz'],
+    require => Metrics::Tarball['logstash-7.9.3.tar.gz'],
   }
 
 
@@ -205,7 +205,7 @@ class metrics inherits hysds_base {
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["kibana-7.9.3-linux-x86_64.tar.gz"],
+                Metrics::Cat_split_file["kibana-7.9.3-linux-x86_64.tar.gz"],
                ],
   }
 
@@ -215,7 +215,7 @@ class metrics inherits hysds_base {
     target => "/home/$user/kibana-7.9.3-linux-x86_64",
     owner => $user,
     group => $group,
-    require => Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
+    require => Metrics::Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
   }
 
 
