@@ -13,7 +13,7 @@ class metrics inherits hysds_base {
     content => template('metrics/bash_profile'),
     owner   => $user,
     group   => $group,
-    mode    => 0644,
+    mode    => "0644",
     require => User[$user],
   }
 
@@ -53,13 +53,13 @@ class metrics inherits hysds_base {
   #####################################################
 
   $jdk_rpm_file = "jdk-8u241-linux-x64.rpm"
-  $jdk_rpm_path = "/etc/puppet/modules/metrics/files/$jdk_rpm_file"
+  $jdk_rpm_path = "/etc/puppetlabs/code/modules/metrics/files/$jdk_rpm_file"
   $jdk_pkg_name = "jdk1.8.x86_64"
   $java_bin_path = "/usr/java/jdk1.8.0_241-amd64/jre/bin/java"
 
 
-  cat_split_file { "$jdk_rpm_file":
-    install_dir => "/etc/puppet/modules/metrics/files",
+  metrics::cat_split_file { "$jdk_rpm_file":
+    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
@@ -70,11 +70,11 @@ class metrics inherits hysds_base {
     ensure   => present,
     source   => $jdk_rpm_path,
     notify   => Exec['ldconfig'],
-    require     => Cat_split_file["$jdk_rpm_file"],
+    require     => Metrics::Cat_split_file["$jdk_rpm_file"],
   }
 
 
-  update_alternatives { 'java':
+  metrics::update_alternatives { 'java':
     path     => $java_bin_path,
     require  => [
                  Package[$jdk_pkg_name],
@@ -106,7 +106,7 @@ class metrics inherits hysds_base {
     content => template('metrics/install_hysds.sh'),
     owner   => $user,
     group   => $group,
-    mode    => 0755,
+    mode    => "0755",
     require => User[$user],
   }
 
@@ -120,7 +120,7 @@ class metrics inherits hysds_base {
     ensure  => directory,
     owner   => $user,
     group   => $group,
-    mode    => 0755,
+    mode    => "0755",
     require => User[$user],
   }
 
@@ -129,7 +129,7 @@ class metrics inherits hysds_base {
     ensure  => present,
     owner   => $user,
     group   => $group,
-    mode    => 0755,
+    mode    => "0755",
     content => template('metrics/metricsd'),
     require => File["$metrics_dir/bin"],
   }
@@ -139,7 +139,7 @@ class metrics inherits hysds_base {
     ensure  => present,
     owner   => $user,
     group   => $group,
-    mode    => 0755,
+    mode    => "0755",
     content => template('metrics/start_metrics'),
     require => File["$metrics_dir/bin"],
   }
@@ -149,26 +149,26 @@ class metrics inherits hysds_base {
     ensure  => present,
     owner   => $user,
     group   => $group,
-    mode    => 0755,
+    mode    => "0755",
     content => template('metrics/stop_metrics'),
     require => File["$metrics_dir/bin"],
   }
 
 
-  cat_split_file { "logstash-7.9.3.tar.gz":
-    install_dir => "/etc/puppet/modules/metrics/files",
+  metrics::cat_split_file { "logstash-7.9.3.tar.gz":
+    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "logstash-7.9.3.tar.gz":
+  metrics::tarball { "logstash-7.9.3.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["logstash-7.9.3.tar.gz"],
+                Metrics::Cat_split_file["logstash-7.9.3.tar.gz"],
                ]
   }
 
@@ -178,7 +178,7 @@ class metrics inherits hysds_base {
     target => "/home/$user/logstash-7.9.3",
     owner => $user,
     group => $group,
-    require => Tarball['logstash-7.9.3.tar.gz'],
+    require => Metrics::Tarball['logstash-7.9.3.tar.gz'],
   }
 
 
@@ -186,26 +186,26 @@ class metrics inherits hysds_base {
     ensure  => present,
     owner   => $user,
     group   => $group,
-    mode    => 0644,
+    mode    => "0644",
     content => template('metrics/indexer.conf'),
     require => File["/home/$user/logstash"],
   }
 
 
-  cat_split_file { "kibana-7.9.3-linux-x86_64.tar.gz":
-    install_dir => "/etc/puppet/modules/metrics/files",
+  metrics::cat_split_file { "kibana-7.9.3-linux-x86_64.tar.gz":
+    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "kibana-7.9.3-linux-x86_64.tar.gz":
+  metrics::tarball { "kibana-7.9.3-linux-x86_64.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["kibana-7.9.3-linux-x86_64.tar.gz"],
+                Metrics::Cat_split_file["kibana-7.9.3-linux-x86_64.tar.gz"],
                ],
   }
 
@@ -215,7 +215,7 @@ class metrics inherits hysds_base {
     target => "/home/$user/kibana-7.9.3-linux-x86_64",
     owner => $user,
     group => $group,
-    require => Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
+    require => Metrics::Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
   }
 
 
@@ -223,7 +223,7 @@ class metrics inherits hysds_base {
 #    ensure  => present,
 #    owner   => $user,
 #    group   => $group,
-#    mode    => 0644,
+#    mode    => "0644",
 #    content => template('metrics/kibana.yml'),
 #    require => File["/home/$user/kibana"],
 #  }
@@ -236,7 +236,7 @@ class metrics inherits hysds_base {
   file { '/etc/rc.d/rc.local':
     ensure  => file,
     content  => template('metrics/rc.local'),
-    mode    => 0755,
+    mode    => "0755",
   }
 
 
@@ -247,7 +247,7 @@ class metrics inherits hysds_base {
   file { "/etc/httpd/conf.d/autoindex.conf":
     ensure  => present,
     content => template('metrics/autoindex.conf'),
-    mode    => 0644,
+    mode    => "0644",
     require => Package['httpd'],
   }
 
@@ -255,7 +255,7 @@ class metrics inherits hysds_base {
   file { "/etc/httpd/conf.d/welcome.conf":
     ensure  => present,
     content => template('metrics/welcome.conf'),
-    mode    => 0644,
+    mode    => "0644",
     require => Package['httpd'],
   }
 
@@ -263,7 +263,7 @@ class metrics inherits hysds_base {
   file { "/etc/httpd/conf.d/ssl.conf":
     ensure  => present,
     content => template('metrics/ssl.conf'),
-    mode    => 0644,
+    mode    => "0644",
     require => Package['httpd'],
   }
 
@@ -271,7 +271,7 @@ class metrics inherits hysds_base {
   file { '/var/www/html/index.html':
     ensure  => file,
     content => template('metrics/index.html'),
-    mode    => 0644,
+    mode    => "0644",
     require => Package['httpd'],
   }
 
@@ -283,14 +283,14 @@ class metrics inherits hysds_base {
   file { "/tmp/worker_metrics.json":
     ensure  => present,
     content => template('metrics/worker_metrics.json'),
-    mode    => 0644,
+    mode    => "0644",
   }
 
 
   file { "/tmp/job_metrics.json":
     ensure  => present,
     content => template('metrics/job_metrics.json'),
-    mode    => 0644,
+    mode    => "0644",
   }
 
 
@@ -299,7 +299,7 @@ class metrics inherits hysds_base {
     content => template('metrics/wait-for-it.sh'),
     owner   => $user,
     group   => $group,
-    mode    => 0755,
+    mode    => "0755",
   }
 
 
@@ -308,7 +308,7 @@ class metrics inherits hysds_base {
     content => template('metrics/import_dashboards.sh'),
     owner   => $user,
     group   => $group,
-    mode    => 0755,
+    mode    => "0755",
   }
 
 

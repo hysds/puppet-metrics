@@ -1,6 +1,6 @@
 if versioncmp($::puppetversion,'3.6.1') >= 0 {
 
-  $allow_virtual_packages = hiera('allow_virtual_packages',false)
+  $allow_virtual_packages = lookup('allow_virtual_packages', undef, undef, false)
 
   Package {
     allow_virtual => $allow_virtual_packages,
@@ -15,7 +15,7 @@ class yum {
 
 class docker {
    yumrepo { "docker-ce-stable":
-      baseurl => "https://download.docker.com/linux/centos/7/$architecture/stable",
+      baseurl => "https://download.docker.com/linux/centos/8/$architecture/stable",
       enabled => 1,
       gpgcheck => 0
    }
