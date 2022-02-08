@@ -311,5 +311,15 @@ class metrics inherits hysds_base {
     mode    => "0755",
   }
 
+  #####################################################
+  # generate ssl certs: problem with mod_ssl per
+  # https://community.letsencrypt.org/t/localhost-crt-does-not-exist-or-is-empty/103979/4
+  #####################################################
+
+  exec { "httpd-ssl-gencerts":
+    command => "/usr/libexec/httpd-ssl-gencerts",
+    require => Package["mod_ssl"],
+  }
+
 
 }
