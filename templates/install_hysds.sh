@@ -5,16 +5,17 @@ BASE_PATH=$(cd "${BASE_PATH}"; pwd)
 
 # usage
 usage() {
-  echo "usage: $0 <release tag>" >&2
+  echo "usage: $0 <repo branch> <release tag>" >&2
 }
 
 
 # check usage
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
   usage
   exit 1
 fi
-release=$1
+branch=$1
+release=$2
 
 
 # print out commands and exit on any errors
@@ -38,7 +39,7 @@ fi
 cd $HOME
 PACKAGE=hysds-framework
 if [ ! -d "$HOME/$PACKAGE" ]; then
-  git clone -b $release --single-branch ${GIT_URL}/hysds/${PACKAGE}.git
+  git clone -b $branch --single-branch ${GIT_URL}/hysds/${PACKAGE}.git
 fi
 cd $HOME/$PACKAGE
 if [ "$release" = "develop" ]; then
