@@ -1,5 +1,5 @@
 #!/bin/bash
-set -etc
+set -ex
 
 if [ "$#" -ne 3 ]; then
   echo "Usage: $0 <github org> <branch> <base branch>"
