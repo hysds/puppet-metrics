@@ -354,30 +354,30 @@ class metrics inherits scientific_python {
   }
 
 
-  cat_split_file { "logstash-7.9.3.tar.gz":
+  cat_split_file { "logstash-oss-7.16.3.tar.gz":
     install_dir => "/etc/puppet/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  tarball { "logstash-7.9.3.tar.gz":
+  tarball { "logstash-oss-7.16.3.tar.gz":
     install_dir => "/home/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Cat_split_file["logstash-7.9.3.tar.gz"],
+                Cat_split_file["logstash-oss-7.16.3.tar.gz"],
                ]
   }
 
 
   file { "/home/$user/logstash":
     ensure => 'link',
-    target => "/home/$user/logstash-7.9.3",
+    target => "/home/$user/logstash-oss-7.16.3",
     owner => $user,
     group => $group,
-    require => Tarball['logstash-7.9.3.tar.gz'],
+    require => Tarball['logstash-oss-7.16.3.tar.gz'],
   }
 
 
