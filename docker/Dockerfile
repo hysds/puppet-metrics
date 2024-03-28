@@ -17,6 +17,9 @@ ARG HYSDS_RELEASE=develop
 # add latest repo version to invalidate cache
 ADD https://api.github.com/repos/${ORG}/puppet-metrics/git/refs/heads/${BRANCH} version.json
 
+# set HOME explicitly
+ENV HOME /home/ops
+
 # provision via puppet
 RUN --mount=type=secret,id=git_oauth_token sudo cp /run/secrets/git_oauth_token $HOME/.git_oauth_token \
  && sudo chown ops:ops $HOME/.git_oauth_token \
