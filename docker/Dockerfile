@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1.0-experimental
-ARG TAG=HC-522
+ARG TAG=HC-522-update
 FROM hysds/dev:${TAG}
 
 # get org and branch
