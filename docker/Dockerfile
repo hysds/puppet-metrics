@@ -19,7 +19,7 @@ ADD https://api.github.com/repos/${ORG}/puppet-metrics/git/refs/heads/${BRANCH} 
 
 # provision via puppet
 RUN --mount=type=secret,id=git_oauth_token sudo cp /run/secrets/git_oauth_token $HOME/.git_oauth_token \
- && sudo chown ops:ops $HOME/.git_oauth_token \
+ && sudo chown root:root $HOME/.git_oauth_token \
  && set -ex \
  && sudo dnf update -y \
  && sudo curl -skL ${GIT_URL} > /tmp/install.sh \
@@ -61,15 +61,15 @@ RUN set -ex \
  && sudo rm -rf /var/cache/dnf
 
 # copy ops home
-COPY --chown=ops:ops --from=0 /home/ops /home/ops
+COPY --chown=root:root --from=0 /home/ops /home/ops
 
 # link configs
 RUN set -ex \
  && ln -sf /home/ops/metrics/etc/celeryconfig.py /home/ops/metrics/ops/hysds/celeryconfig.py
 
 # set default supervisord conf and copy includes
-COPY --chown=ops:ops docker/supervisord.conf /home/ops/metrics/etc/supervisord.conf
-COPY --chown=ops:ops docker/conf.d /home/ops/metrics/etc/conf.d
+COPY --chown=root:root docker/supervisord.conf /home/ops/metrics/etc/supervisord.conf
+COPY --chown=root:root docker/conf.d /home/ops/metrics/etc/conf.d
 
 # set entrypoint
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
