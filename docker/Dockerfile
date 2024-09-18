@@ -61,15 +61,15 @@ RUN set -ex \
  && sudo rm -rf /var/cache/dnf
 
 # copy ops home
-COPY --chown=root:root --from=0 /home/ops /home/ops
+COPY --chown=root:root --from=0 /root /root
 
 # link configs
 RUN set -ex \
- && ln -sf /home/ops/metrics/etc/celeryconfig.py /home/ops/metrics/ops/hysds/celeryconfig.py
+ && ln -sf $HOME/metrics/etc/celeryconfig.py $HOME/metrics/ops/hysds/celeryconfig.py
 
 # set default supervisord conf and copy includes
-COPY --chown=root:root docker/supervisord.conf /home/ops/metrics/etc/supervisord.conf
-COPY --chown=root:root docker/conf.d /home/ops/metrics/etc/conf.d
+COPY --chown=root:root docker/supervisord.conf $HOME/metrics/etc/supervisord.conf
+COPY --chown=root:root docker/conf.d $HOME/metrics/etc/conf.d
 
 # set entrypoint
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
