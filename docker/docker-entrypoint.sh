@@ -2,7 +2,7 @@
 set -e
 
 # set HOME explicitly
-export HOME=/home/ops
+export HOME=/root
 
 # wait for redis and ES
 /wait-for-it.sh -t 30 metrics-redis:6379
@@ -14,15 +14,9 @@ GID=$(id -g)
 # generate ssh keys
 gosu 0:0 ssh-keygen -A 2>/dev/null
 
-# update user and group ids
-gosu 0:0 groupmod -g $GID ops 2>/dev/null
-gosu 0:0 usermod -u $UID -g $GID ops 2>/dev/null
-gosu 0:0 usermod -aG docker ops 2>/dev/null
-
-# update ownership
-gosu 0:0 chown -R $UID:$GID $HOME 2>/dev/null || true
-gosu 0:0 chown -R $UID:$GID /var/run/docker.sock 2>/dev/null || true
-gosu 0:0 chown -R $UID:$GID /var/log/supervisor 2>/dev/null || true
+if [ -e /var/run/docker.sock ]; then
+  gosu 0:0 chown -R $UID:$GID /var/run/docker.sock 2>/dev/null || true
+fi
 
 # source bash profile
 source $HOME/.bash_profile

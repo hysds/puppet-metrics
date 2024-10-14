@@ -8,7 +8,7 @@ class metrics inherits hysds_base {
   # copy user files
   #####################################################
   
-  file { "/home/$user/.bash_profile":
+  file { "/$user/.bash_profile":
     ensure  => present,
     content => template('metrics/bash_profile'),
     owner   => $user,
@@ -22,7 +22,7 @@ class metrics inherits hysds_base {
   # metrics directory
   #####################################################
 
-  $metrics_dir = "/home/$user/metrics"
+  $metrics_dir = "/$user/metrics"
 
 
   #####################################################
@@ -98,10 +98,10 @@ class metrics inherits hysds_base {
 
   #####################################################
   # install install_hysds.sh script and other config
-  # files in ops home
+  # files in root home
   #####################################################
 
-  file { "/home/$user/install_hysds.sh":
+  file { "/$user/install_hysds.sh":
     ensure  => present,
     content => template('metrics/install_hysds.sh'),
     owner   => $user,
@@ -163,7 +163,7 @@ class metrics inherits hysds_base {
 
 
   metrics::tarball { "logstash-7.9.3.tar.gz":
-    install_dir => "/home/$user",
+    install_dir => "/$user",
     owner => $user,
     group => $group,
     require => [
@@ -173,9 +173,9 @@ class metrics inherits hysds_base {
   }
 
 
-  file { "/home/$user/logstash":
+  file { "/$user/logstash":
     ensure => 'link',
-    target => "/home/$user/logstash-7.9.3",
+    target => "/$user/logstash-7.9.3",
     owner => $user,
     group => $group,
     require => Metrics::Tarball['logstash-7.9.3.tar.gz'],
@@ -188,7 +188,7 @@ class metrics inherits hysds_base {
     group   => $group,
     mode    => "0644",
     content => template('metrics/indexer.conf'),
-    require => File["/home/$user/logstash"],
+    require => File["/$user/logstash"],
   }
 
 
@@ -200,7 +200,7 @@ class metrics inherits hysds_base {
 
 
   metrics::tarball { "kibana-7.9.3-linux-x86_64.tar.gz":
-    install_dir => "/home/$user",
+    install_dir => "/$user",
     owner => $user,
     group => $group,
     require => [
@@ -210,22 +210,22 @@ class metrics inherits hysds_base {
   }
 
 
-  file { "/home/$user/kibana":
+  file { "/$user/kibana":
     ensure => 'link',
-    target => "/home/$user/kibana-7.9.3-linux-x86_64",
+    target => "/$user/kibana-7.9.3-linux-x86_64",
     owner => $user,
     group => $group,
     require => Metrics::Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
   }
 
 
-#  file { "/home/$user/kibana/config/kibana.yml":
+#  file { "/$user/kibana/config/kibana.yml":
 #    ensure  => present,
 #    owner   => $user,
 #    group   => $group,
 #    mode    => "0644",
 #    content => template('metrics/kibana.yml'),
-#    require => File["/home/$user/kibana"],
+#    require => File["/$user/kibana"],
 #  }
 
 
