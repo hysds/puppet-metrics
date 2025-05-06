@@ -34,5 +34,6 @@ docker build --progress=plain --rm --force-rm \
   --build-arg ORG=${ORG} \
   --build-arg BRANCH=${BRANCH} \
   --build-arg BASE_BRANCH=${BASE_BRANCH} \
+  --platform linux/amd64,linux/arm64 \
   --secret id=git_oauth_token,src=$OAUTH_CFG . || exit 1
 docker system prune -f || :
