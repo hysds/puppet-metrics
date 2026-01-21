@@ -50,12 +50,27 @@ class metrics inherits hysds_base {
 
   #####################################################
   # install oracle java and set default
+  # Architecture-specific JDK installation
   #####################################################
 
-  $jdk_rpm_file = "jdk-8u241-linux-x64.rpm"
+  # Determine architecture-specific JDK files
+  $arch = $::architecture
+  
+  # Map architecture to JDK file names
+  # x86_64 uses x64, aarch64 uses aarch64
+  if $arch == 'x86_64' {
+    $jdk_rpm_file = "jdk-8u241-linux-x64.rpm"
+    $jdk_pkg_name = "jdk1.8.x86_64"
+    $java_bin_path = "/usr/java/jdk1.8.0_241-amd64/jre/bin/java"
+  } elsif $arch == 'aarch64' {
+    $jdk_rpm_file = "jdk-8u241-linux-aarch64.rpm"
+    $jdk_pkg_name = "jdk1.8.aarch64"
+    $java_bin_path = "/usr/java/jdk1.8.0_241-aarch64/jre/bin/java"
+  } else {
+    fail("Unsupported architecture: ${arch}")
+  }
+
   $jdk_rpm_path = "/etc/puppetlabs/code/modules/metrics/files/$jdk_rpm_file"
-  $jdk_pkg_name = "jdk1.8.x86_64"
-  $java_bin_path = "/usr/java/jdk1.8.0_241-amd64/jre/bin/java"
 
 
   metrics::cat_split_file { "$jdk_rpm_file":
@@ -192,30 +207,42 @@ class metrics inherits hysds_base {
   }
 
 
-  metrics::cat_split_file { "kibana-7.9.3-linux-x86_64.tar.gz":
+  # Determine architecture-specific Kibana tarball
+  # x86_64 uses x86_64, aarch64 uses aarch64
+  if $arch == 'x86_64' {
+    $kibana_tarball = "kibana-7.9.3-linux-x86_64.tar.gz"
+    $kibana_dir = "kibana-7.9.3-linux-x86_64"
+  } elsif $arch == 'aarch64' {
+    $kibana_tarball = "kibana-7.9.3-linux-aarch64.tar.gz"
+    $kibana_dir = "kibana-7.9.3-linux-aarch64"
+  } else {
+    fail("Unsupported architecture: ${arch}")
+  }
+
+  metrics::cat_split_file { "$kibana_tarball":
     install_dir => "/etc/puppetlabs/code/modules/metrics/files",
     owner       =>  $user,
     group       =>  $group,
   }
 
 
-  metrics::tarball { "kibana-7.9.3-linux-x86_64.tar.gz":
+  metrics::tarball { "$kibana_tarball":
     install_dir => "/$user",
     owner => $user,
     group => $group,
     require => [
                 User[$user],
-                Metrics::Cat_split_file["kibana-7.9.3-linux-x86_64.tar.gz"],
+                Metrics::Cat_split_file["$kibana_tarball"],
                ],
   }
 
 
   file { "/$user/kibana":
     ensure => 'link',
-    target => "/$user/kibana-7.9.3-linux-x86_64",
+    target => "/$user/$kibana_dir",
     owner => $user,
     group => $group,
-    require => Metrics::Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
+    require => Metrics::Tarball["$kibana_tarball"],
   }
 
 
