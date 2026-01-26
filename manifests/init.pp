@@ -225,10 +225,13 @@ class metrics inherits hysds_base {
   } elsif $arch == 'aarch64' {
     # For ARM64, download Kibana directly from Elastic
     # Kibana 7.9.3 ARM64 tarball is not included in the repo
+    # Use --http1.1 to avoid HTTP/2 stream errors with large files
+    # Add retries and connection timeout for reliability
     exec { 'download-kibana-arm64':
-      command => "/usr/bin/curl -L -o /$user/kibana-7.9.3-linux-aarch64.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-7.9.3-linux-aarch64.tar.gz",
+      command => "/usr/bin/curl --http1.1 --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 600 -L -o /$user/kibana-7.9.3-linux-aarch64.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-7.9.3-linux-aarch64.tar.gz",
       creates => "/$user/kibana-7.9.3-linux-aarch64.tar.gz",
       require => User[$user],
+      timeout => 900,
     }
 
     exec { 'extract-kibana-arm64':
