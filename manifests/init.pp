@@ -70,9 +70,10 @@ class metrics inherits hysds_base {
 
   # Set java alternatives to use OpenJDK 8
   # The path is architecture-independent for OpenJDK
+  # Use auto mode which will automatically select the best alternative
   exec { 'set-java-alternatives':
-    command => '/usr/sbin/alternatives --set java /usr/lib/jvm/jre-1.8.0-openjdk/bin/java',
-    unless  => '/usr/sbin/alternatives --display java | grep "link currently points to /usr/lib/jvm/jre-1.8.0-openjdk/bin/java"',
+    command => '/usr/sbin/alternatives --auto java',
+    unless  => '/usr/sbin/alternatives --display java | grep -E "(link currently points to|best version is) /usr/lib/jvm"',
     require => Package['java-1.8.0-openjdk-devel'],
   }
 
