@@ -25,14 +25,34 @@ if [ ! -e "$OAUTH_CFG" ]; then
 fi
 
 
-# build
-docker build --progress=plain --rm --force-rm \
-  -t hysds/metrics:${TAG} -f docker/Dockerfile \
-  --build-arg FRAMEWORK_BRANCH=${FRAMEWORK_BRANCH} \
-  --build-arg HYSDS_RELEASE=${HYSDS_RELEASE} \
-  --build-arg TAG=${BASE_IMAGE_TAG} \
-  --build-arg ORG=${ORG} \
-  --build-arg BRANCH=${BRANCH} \
-  --build-arg BASE_BRANCH=${BASE_BRANCH} \
-  --secret id=git_oauth_token,src=$OAUTH_CFG . || exit 1
-docker system prune -f || :
+# Check if multi-platform build is requested
+if [ "${USE_BUILDX}" = "1" ]; then
+  echo "Building multi-platform images using Docker Buildx"
+  PLATFORM=${DOCKER_BUILDX_PLATFORM:-"linux/amd64,linux/arm64"}
+  
+  # build metrics with buildx
+  docker buildx build --platform ${PLATFORM} \
+    --progress=plain \
+    -t hysds/metrics:${TAG} -f docker/Dockerfile \
+    --build-arg FRAMEWORK_BRANCH=${FRAMEWORK_BRANCH} \
+    --build-arg HYSDS_RELEASE=${HYSDS_RELEASE} \
+    --build-arg TAG=${BASE_IMAGE_TAG} \
+    --build-arg ORG=${ORG} \
+    --build-arg BRANCH=${BRANCH} \
+    --build-arg BASE_BRANCH=${BASE_BRANCH} \
+    --secret id=git_oauth_token,src=$OAUTH_CFG . --push || exit 1
+else
+  echo "Building single-platform images using standard Docker build"
+  
+  # build
+  docker build --progress=plain --rm --force-rm \
+    -t hysds/metrics:${TAG} -f docker/Dockerfile \
+    --build-arg FRAMEWORK_BRANCH=${FRAMEWORK_BRANCH} \
+    --build-arg HYSDS_RELEASE=${HYSDS_RELEASE} \
+    --build-arg TAG=${BASE_IMAGE_TAG} \
+    --build-arg ORG=${ORG} \
+    --build-arg BRANCH=${BRANCH} \
+    --build-arg BASE_BRANCH=${BASE_BRANCH} \
+    --secret id=git_oauth_token,src=$OAUTH_CFG . || exit 1
+  docker system prune -f || :
+fi

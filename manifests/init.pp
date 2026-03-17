@@ -50,36 +50,31 @@ class metrics inherits hysds_base {
 
   #####################################################
   # install oracle java and set default
+  # Architecture-specific JDK installation
   #####################################################
 
-  $jdk_rpm_file = "jdk-8u241-linux-x64.rpm"
-  $jdk_rpm_path = "/etc/puppetlabs/code/modules/metrics/files/$jdk_rpm_file"
-  $jdk_pkg_name = "jdk1.8.x86_64"
-  $java_bin_path = "/usr/java/jdk1.8.0_241-amd64/jre/bin/java"
+  # Determine architecture for multi-arch support
+  $arch = $::architecture
+  
+  #####################################################
+  # install OpenJDK 8 (multi-architecture compatible)
+  # Uses system repositories instead of Oracle JDK RPMs
+  #####################################################
 
-
-  metrics::cat_split_file { "$jdk_rpm_file":
-    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
-    owner       =>  $user,
-    group       =>  $group,
+  # Install OpenJDK 8 from system repositories
+  # This works on both x86_64 and aarch64 without separate RPM files
+  package { 'java-1.8.0-openjdk-devel':
+    ensure => present,
+    notify => Exec['ldconfig'],
   }
 
-
-  package { "$jdk_pkg_name":
-    provider => rpm,
-    ensure   => present,
-    source   => $jdk_rpm_path,
-    notify   => Exec['ldconfig'],
-    require     => Metrics::Cat_split_file["$jdk_rpm_file"],
-  }
-
-
-  metrics::update_alternatives { 'java':
-    path     => $java_bin_path,
-    require  => [
-                 Package[$jdk_pkg_name],
-                 Exec['ldconfig']
-                ],
+  # Set java alternatives to use OpenJDK 8
+  # The path is architecture-independent for OpenJDK
+  # Use auto mode which will automatically select the best alternative
+  exec { 'set-java-alternatives':
+    command => '/usr/sbin/alternatives --auto java',
+    unless  => '/usr/sbin/alternatives --display java | grep -E "(link currently points to|best version is) /usr/lib/jvm"',
+    require => Package['java-1.8.0-openjdk-devel'],
   }
 
 
@@ -192,30 +187,75 @@ class metrics inherits hysds_base {
   }
 
 
-  metrics::cat_split_file { "kibana-7.9.3-linux-x86_64.tar.gz":
-    install_dir => "/etc/puppetlabs/code/modules/metrics/files",
-    owner       =>  $user,
-    group       =>  $group,
-  }
+  #####################################################
+  # Install Kibana using tarball (architecture-specific)
+  # Note: For ARM64, Kibana 7.9.3 tarball must be downloaded separately
+  # and split into files. Alternatively, use a newer version from Elastic repos.
+  #####################################################
+  
+  # Determine architecture-specific Kibana tarball
+  # x86_64 uses x86_64, aarch64 uses aarch64
+  if $arch == 'x86_64' {
+    $kibana_tarball = "kibana-7.9.3-linux-x86_64.tar.gz"
+    $kibana_dir = "kibana-7.9.3-linux-x86_64"
+    
+    metrics::cat_split_file { "$kibana_tarball":
+      install_dir => "/etc/puppetlabs/code/modules/metrics/files",
+      owner       =>  $user,
+      group       =>  $group,
+    }
 
+    metrics::tarball { "$kibana_tarball":
+      install_dir => "/$user",
+      owner => $user,
+      group => $group,
+      require => [
+                  User[$user],
+                  Metrics::Cat_split_file["$kibana_tarball"],
+                 ],
+    }
 
-  metrics::tarball { "kibana-7.9.3-linux-x86_64.tar.gz":
-    install_dir => "/$user",
-    owner => $user,
-    group => $group,
-    require => [
-                User[$user],
-                Metrics::Cat_split_file["kibana-7.9.3-linux-x86_64.tar.gz"],
-               ],
-  }
+    file { "/$user/kibana":
+      ensure => 'link',
+      target => "/$user/$kibana_dir",
+      owner => $user,
+      group => $group,
+      require => Metrics::Tarball["$kibana_tarball"],
+    }
+  } elsif $arch == 'aarch64' {
+    # For ARM64, download Kibana directly from Elastic
+    # Kibana 7.9.3 ARM64 tarball is not included in the repo
+    # Use --http1.1 to avoid HTTP/2 stream errors with large files
+    # Add retries and connection timeout for reliability
+    exec { 'download-kibana-arm64':
+      command => "/usr/bin/curl --http1.1 --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 600 -L -o /$user/kibana-7.9.3-linux-aarch64.tar.gz https://artifacts.elastic.co/downloads/kibana/kibana-7.9.3-linux-aarch64.tar.gz",
+      creates => "/$user/kibana-7.9.3-linux-aarch64.tar.gz",
+      require => User[$user],
+      timeout => 900,
+    }
 
+    exec { 'extract-kibana-arm64':
+      command => "/usr/bin/tar -xzf /$user/kibana-7.9.3-linux-aarch64.tar.gz -C /$user",
+      creates => "/$user/kibana-7.9.3-linux-aarch64",
+      require => Exec['download-kibana-arm64'],
+    }
 
-  file { "/$user/kibana":
-    ensure => 'link',
-    target => "/$user/kibana-7.9.3-linux-x86_64",
-    owner => $user,
-    group => $group,
-    require => Metrics::Tarball["kibana-7.9.3-linux-x86_64.tar.gz"],
+    exec { 'chown-kibana-arm64':
+      command => "/usr/bin/chown -R ${user}:${group} /$user/kibana-7.9.3-linux-aarch64",
+      require => Exec['extract-kibana-arm64'],
+      refreshonly => true,
+      subscribe => Exec['extract-kibana-arm64'],
+    }
+
+    file { "/$user/kibana":
+      ensure => 'link',
+      target => "/$user/kibana-7.9.3-linux-aarch64",
+      owner => $user,
+      group => $group,
+      require => Exec['extract-kibana-arm64'],
+    }
+  } else {
+    fail("Unsupported architecture: ${arch}")
   }
 
 
